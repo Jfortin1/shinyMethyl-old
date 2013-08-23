@@ -1,0 +1,2 @@
+import(IlluminaHumanMethylation450kannotation.ilmn.v1.2)
+export(runShinyMethyl, extractFromRGSet450k, extractFromTargets450k, runExampleTCGA)

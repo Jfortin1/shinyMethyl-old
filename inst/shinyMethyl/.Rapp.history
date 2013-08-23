@@ -1,0 +1,111 @@
+load("/Users/Jean-Philippe/Desktop/shinyMethyl/shinyMethyl/data/TCGAExtractedData.rda")
+cutoff = -3
+XYMedians = TCGAExtractedData$XYMedians
+palette("default")#
+	x <- XYMedians$medianXU + XYMedians$medianXM#
+	y <- XYMedians$medianYM + XYMedians$medianYU#
+	diff <- log2(y)-log2(x)#
+	n <- length(x)#
+	color = rep("lightskyblue", n)#
+	color[which(diff < cutoff)] <- "darkorange1"#
+	plot(diff, jitter(rep(0,n),factor=1.5), #
+	          ylim = c(-1,1), pch=18, cex=2,col= color, #
+	              yaxt="n", xlab="median CN(Y)  - median CN(X)", #
+	                 ylab="")#
+	abline(v=as.numeric(cutoff),lty=3,lwd=2)#
+	if (length(unique(color))!=1){#
+		legend("topright",c("Predicted male","Predicted female"),cex=2, pch=18, col=c("lightskyblue","darkorange1"))#
+	}
+covariates = TCGAExtractedData$pd
+possibilities <- c("gender","Gender","sex","Sex","GENDER","SEX")
+sum <- sum(possibilities %in% colnames(covariates))
+sum
+goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]
+goodIndex <- match(goodColumn, colnames(covariates))
+givenGender <- as.character(covariates[,goodIndex])
+returnPredictedGender <- function(cutoff = (-3), XYMedians){#
+	x = XYMedians$medianXU + XYMedians$medianXM#
+	y = XYMedians$medianYM + XYMedians$medianYU#
+	diff <- log2(y)-log2(x)#
+	n <- length(diff)#
+	predictedGender = rep("M", n)#
+	predictedGender[which(diff < cutoff)] <- "F"     #
+	names(predictedGender) <- names(XYMedians$medianXU)   #
+	return(predictedGender)#
+}
+predictedGender <- returnPredictedGender(XYMedians = XYMedians)
+predictedGender
+color <- predictedGender
+predictedGender[predictedGender=="lightskyblue"] <- "M"
+predictedGender[predictedGender=="darkorange1"] <- "F"
+diffGender <- rep(FALSE,length(predictedGender))
+diffGender
+for (i in 1:length(predictedGender)){#
+	    	if (predictedGender[i]!=givenGender[i] && !is.na(givenGender[i])){#
+	    		diffGender[i] <- TRUE#
+	    	}#
+	    }
+diffGender
+sum(diffGender)
+color[diffGender] <- "black"
+color
+y <- jitter(rep(0,length(color)),factor=1.5)
+cex <- rep(2,length(color))
+y[diffGender] <- -0.2
+cex[diffGender] <- 3
+plot(diff, y, #
+			          ylim = c(-1,1), pch=18, cex=cex, col= color, #
+			              yaxt="n", xlab="median CN(Y)  - median CN(X)",#
+			                  ylab="", main = "Gender prediction using the X and Y chromosomes intensities ",#
+			                      cex.main = 1.5, cex.lab = 1.5#
+			)
+goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]#
+		goodIndex <- match(goodColumn, colnames(covariates))#
+		givenGender <- as.character(covariates[,goodIndex])#
+#
+        color <- predictedGender#
+        color[color == "M"] <- "lightskyblue"#
+        color[color == "F"] <- "darkorange1"
+predictedGender <- returnPredictedGender(XYMedians = XYMedians)
+goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]#
+		goodIndex <- match(goodColumn, colnames(covariates))#
+		givenGender <- as.character(covariates[,goodIndex])#
+#
+        color <- predictedGender#
+        color[color == "M"] <- "lightskyblue"#
+        color[color == "F"] <- "darkorange1"#
+#
+    	predictedGender[predictedGender=="lightskyblue"] <- "M"#
+	    predictedGender[predictedGender=="darkorange1"] <- "F"#
+	    diffGender <- rep(FALSE,length(predictedGender))#
+	    for (i in 1:length(predictedGender)){#
+	    	if (predictedGender[i]!=givenGender[i] && !is.na(givenGender[i])){#
+	    		diffGender[i] <- TRUE#
+	    	}#
+	    }
+color[diffGender] <- "black"#
+	    	 y <- jitter(rep(0,length(color)),factor=1.5)#
+		    cex <- rep(2,length(color))#
+		    y[diffGender] <- -0.2#
+		    cex[diffGender] <- 3#
+		    plot(diff, y, #
+			          ylim = c(-1,1), pch=18, cex=cex, col= color, #
+			              yaxt="n", xlab="median CN(Y)  - median CN(X)",#
+			                  ylab="", main = "Gender prediction using the X and Y chromosomes intensities ",#
+			                      cex.main = 1.5, cex.lab = 1.5#
+			)
+plot(diff, y, #
+			          ylim = c(-1,1), pch=18, cex=cex, col= color, #
+			              yaxt="n", xlab="median CN(Y)  - median CN(X)",#
+			                  ylab="", main = "Gender prediction using the X and Y chromosomes intensities ",#
+			                      cex.main = 1.5, cex.lab = 1.5#
+			)#
+			abline(v=as.numeric(cutoff),lty=3,lwd=2)#
+			for (i in 1:length(diffGender)){#
+				if (diffGender[i]){#
+					text(diff[i],y[i]-0.2,names(XYMedians$medianXU[i]))#
+				}#
+			}
+if (length(unique(color))==3){#
+				legend("topright",c("Predicted male","Predicted female","Unmatching samples"),cex=1.5, pch=18, col=c("lightskyblue","darkorange1","black"))#
+			}

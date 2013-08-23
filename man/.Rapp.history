@@ -1,0 +1,18 @@
+library(shinyMethyl)
+runExampleTCGA()
+load("/Users/Jean-Philippe/Desktop/shinyMethyl/shinyMethyl/data/TCGAExtractedData.rda")
+TCGAExtractedData <- extractedData
+getwd()
+save(TCGAExtractedData, file = "TCGAExtractedData.rda")
+library(shinyMethyl)
+library(shinyMethylData)
+runExampleTCGA <- function(){#
+	data(TCGAExtractedData, package = "shinyMethylData")#
+	runShinyMethyl(TCGAExtractedData)#
+}
+runExampleTCGA()
+load("/Users/Jean-Philippe/Desktop/shinyMethyl/shinyMethyl/data/shinymethylAnnotation.rda")
+ls()
+chrX
+chrY
+autosomal
