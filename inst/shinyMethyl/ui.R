@@ -145,7 +145,7 @@ headerPanel(HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georg
 
 		    		 sliderInput(inputId = "bandwidth",
 		                  label = "Bandwidth Beta-value",
-		                  min = 0, max = 0.05, step = 0.001, value = 0.03),
+		                  min = 0, max = 0.05, step = 0.001, value = 0.02),
 		             sliderInput(inputId = "bandwidth2",
 		                  label = "Bandwidth M-value",
 		                  min = 0, max = 0.5, step = 0.001, value = 0.35)
