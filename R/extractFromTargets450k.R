@@ -1,6 +1,7 @@
 extractFromTargets450k <-
 function(targets, file="extractedData.Rda", bySubsets = FALSE) {
-	extractedData <- vector("list",12)
+	
+	extractedData = NULL
 	if (bySubsets==FALSE){
 		extractedData <- returnSummary450k(targets)
 	} else {
@@ -10,8 +11,9 @@ function(targets, file="extractedData.Rda", bySubsets = FALSE) {
 			end <- c(end, nrow(targets))
 		}
 		for (k in 1:length(start)){
+			print(k)
 			currentTargets <- targets[start[k]:end[k],]
-			extractedData <- listListMatrixMerge(extractedData, returnSummary450k(currentTargets))
+			extractedData <- mergeExtractedData(extractedData, returnSummary450k(currentTargets))
 		}
 	}
 	
@@ -19,6 +21,53 @@ function(targets, file="extractedData.Rda", bySubsets = FALSE) {
 	return(extractedData)	
 }
 
+
+
+mergeExtractedData <- function(extractedDataPart1, extractedDataPart2){
+	if (is.null(extractedDataPart1)){
+		return(extractedDataPart2)
+	} else {
+		newExtractedData <- vector("list", length(extractedDataPart2))
+		names(newExtractedData) <- names(extractedDataPart2)
+		for (i in 1:13){
+		newExtractedData[[i]] <- mergeListOfMatrices(extractedDataPart1[[i]], extractedDataPart2[[i]], by= "column")
+	}
+		for (i in 14:14){
+		 newExtractedData[[i]] <- mergeListOfVectors(extractedDataPart1[[i]], extractedDataPart2[[i]])
+	 }
+	for (i in 15:15){
+		 newExtractedData[[i]] <- rbind(extractedDataPart1[[i]], extractedDataPart2[[i]])
+	 }
+	return(newExtractedData)
+	}
+}
+
+
+
+
+mergeListOfVectors <- function(listPart1, listPart2){
+	newList <- vector("list", length(listPart2))
+	names(newList) <- names(listPart2)
+		for (k in 1:length(listPart2)){
+        	newList[[k]] <- c(listPart1[[k]], listPart2[[k]])
+        }
+	return(newList)
+}
+
+mergeListOfMatrices <- function(listPart1, listPart2, by ="column"){
+	newList <- vector("list", length(listPart2))
+	names(newList) <- names(listPart2)
+	if (by== "column"){
+        for (k in 1:length(listPart2)){
+        	newList[[k]] <- cbind(listPart1[[k]], listPart2[[k]])
+        }
+	} else {
+		for (k in 1:length(listPart2)){
+        	newList[[k]] <- rbind(listPart1[[k]], listPart2[[k]])
+        }
+	}
+	return(newList)
+}
 
 
 returnSummary450k <-
@@ -236,3 +285,35 @@ function(targets){
 		XYMedians = XYMedians,
 		pd = pd))
 }
+
+
+
+
+
+
+extractXYMedians <-
+function(RGSet){
+		library(IlluminaHumanMethylation450kannotation.ilmn.v1.2)
+		library(minfi)
+		locations <- getLocations(IlluminaHumanMethylation450kannotation.ilmn.v1.2)
+		chrY <- names(locations[seqnames(locations)=="chrY"])
+		chrX <- names(locations[seqnames(locations)=="chrX"])
+		rawSet <- preprocessRaw(RGSet)
+		M <- getMeth(rawSet)
+		U <- getUnmeth(rawSet)
+		MX <- M[match(chrX,rownames(M)),]
+		MY <- M[match(chrY,rownames(M)),]
+		UX  <- U[match(chrX,rownames(U)),]
+		UY  <- U[match(chrY,rownames(U)),]
+		medianXU <-  apply(UX,2,function(x) median(x,na.rm=T))
+		medianXM <-  apply(MX,2,function(x) median(x,na.rm=T))
+		medianYU <- apply(UY,2,function(x) median(x,na.rm=T))
+		medianYM <- apply(MY,2,function(x) median(x,na.rm=T))
+		return(list(medianXU = medianXU,
+		    medianXM = medianXM,
+		    medianYU = medianYU,
+		    medianYM = medianYM)
+		)
+	}
+
+
