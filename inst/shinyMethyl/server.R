@@ -145,7 +145,8 @@ sampleColors <- reactive(
                                               controlNames = controlNames ) 		
                           
 	   if (input$mOrBeta=="Beta-value"){
-	   	
+	   	from = 0
+	   	to = 1
 	   	densitiesPlot( quantiles = betaQuantiles[[index]],
 	   	                              main = "BETA-VALUE DENSITIES", 
 	   	                              xlab = "Beta-values",
@@ -156,7 +157,7 @@ sampleColors <- reactive(
 	   	                              solidLine = input$solidLine,
 	   	                              mean = input$mean,
 	   	                              slides = input$slides,
-	   	                              col = sampleColors())
+	   	                              col = sampleColors(), from=from, to =to)
 	   	
         abline(v=0,lty=3,lwd=3)
 	    abline(v=1,lty=3,lwd=3)
@@ -171,6 +172,8 @@ sampleColors <- reactive(
       )    
       
 	  } else {
+	  	from = -10
+	  	to = 10
 	  		densitiesPlot( quantiles = mQuantiles[[index]],
 	   	                              main = "M-VALUE DENSITIES", 
 	   	                              xlab = "M-values",
@@ -181,7 +184,7 @@ sampleColors <- reactive(
 	   	                              solidLine = input$solidLine,
 	   	                              mean = input$mean,
 	   	                              slides = input$slides,
-	   	                              col = sampleColors())
+	   	                              col = sampleColors(), from=-10, to=-10)
 
 	  	abline(v=0,lty=3,lwd=3)
 	  	
