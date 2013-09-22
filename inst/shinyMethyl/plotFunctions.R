@@ -275,10 +275,10 @@ densitiesPlot <- function(quantiles,
 				numberBatches=length(unique(batch))	
 	  			for (i in 1:length(batches)){
 		  			currentIndices <- which(slideNames==batches[i])
-		  			currentColors <- col[which(slideNames==batches[i])]
+		  			currentColors <- col[currentIndices]
 		  			for (j in 1:length(currentIndices)){
 		  				lines(density(quantiles[,currentIndices[j]], bw=bw, from=from, to=to),
-		  				     col= currentColors, lwd = 1, lty=lty)
+		  				     col= currentColors[j], lwd = 1, lty=lty)
 		  			}
 	  			}
 			  }
@@ -507,8 +507,7 @@ plotPredictedGender <- function(cutoff = (-3),
 	plot(diff, jitter(rep(0,n),factor=1.5), 
 	          ylim = c(-1,1), pch=18, cex=2,col= color, 
 	              yaxt="n", xlab="median CN(Y)  - median CN(X)", 
-	                 ylab="")
-	                 
+	                 ylab="")            
 	abline(v=as.numeric(cutoff),lty=3,lwd=2)
 	
 	if (length(unique(color))!=1){
