@@ -113,11 +113,13 @@ function(RGSet){
 	uProbesIGrn <- intersect(uProbeNames, probesIGrn)
 	uProbesIRed <- intersect(uProbeNames, probesIRed)
 	uProbesII   <- intersect(uProbeNames, probesII)
+	uProbesX <- intersect(uProbeNames, chrX)
+	uProbesY <-  intersect(uProbeNames, chrY)
 	indicesIGrn <- match(uProbesIGrn, uProbeNames)
 	indicesIRed <- match(uProbesIRed, uProbeNames)
 	indicesII   <- match(uProbesII, uProbeNames)
-    indicesX <- match(chrX, uProbeNames)
-	 indicesY <- match(chrY, uProbeNames)
+    indicesX <- match(uProbesX, uProbeNames)
+	indicesY <- match(uProbesY, uProbeNames)
 	 
 	 indList <- list(indicesIGrn, indicesIRed, indicesII, indicesX, indicesY)
 	 names(indList) <- c("IGrn", "IRed", "II","X","Y")
@@ -167,49 +169,21 @@ function(RGSet){
 		    )
 	}
 	
-	### Extraction of the densities
-	mDensities               <- vector("list",5)
-	betaDensities            <- vector("list", 5)
-	methDensities          <- vector("list", 5)
-	unmethDensities        <- vector("list", 5)
-	cnDensities             <- vector("list", 5)
-	names(mDensities)        <- c("IGrn", "IRed", "II","X","Y")
-	names(betaDensities)     <- c("IGrn", "IRed", "II","X","Y")
-	names(methDensities)   <- c("IGrn", "IRed", "II","X","Y")
-	names(unmethDensities) <- c("IGrn", "IRed", "II","X","Y")
-	names(cnDensities) <- c("IGrn", "IRed", "II","X","Y")
 
-
-	for (i in 1:5){
-		mDensities[[i]] <- 
-		   apply(m[indList[[i]], ], 2, 
-		       function(x) density(x, na.rm=T, bw=0.1, n = 500)$y
-		    )
-		    
-		betaDensities[[i]] <- 
-		   apply(beta[indList[[i]], ], 2, 
-		       function(x) density(x, na.rm=T, bw=0.01, n = 500, from=0, to=1)$y
-		 )
-		    
-		methDensities[[i]] <- 
-		   apply(meth[indList[[i]], ], 2, 
-		       function(x) quantile(x, probs=probs, na.rm=T)
-		)
-		    
-		unmethDensities[[i]] <- 
-		   apply(unmeth[indList[[i]], ], 2, 
-		       function(x) quantile(x, probs=probs, na.rm=T)
-		)
-		
-		cnDensities[[i]] <- 
-		   apply(cn[indList[[i]], ], 2, 
-		       function(x) quantile(x, probs=probs, na.rm=T)
-		)
-		
-	}
 	
-	XYMedians <- extractXYMedians(RGSet)
-	sampleDistance <- returnSampleDistance(beta , 1000)
+	medianXU <-  unmethQuantiles$X[250,]
+		medianXM <-  methQuantiles$X[250,]
+		medianYU <- unmethQuantiles$Y[250,]
+		medianYM <- methQuantiles$Y[250,]
+
+
+	
+	XYMedians <- list(medianXU = medianXU,
+		    medianXM = medianXM,
+		    medianYU = medianYU,
+		    medianYM = medianYM)
+
+
 	pcaInfo <- returnPCScores(beta, 5000 )
 
 	return(list(
@@ -218,16 +192,10 @@ function(RGSet){
 		methQuantiles = methQuantiles,
 		unmethQuantiles = unmethQuantiles,
 		cnQuantiles = cnQuantiles,
-		mDensities = mDensities,
-		betaDensities = betaDensities,
-		methDensities = methDensities,
-		unmethDensities = unmethDensities,
-		cnDensities = cnDensities,
 		greenControls = greenControls,
 		redControls = redControls,
 		oobControls = oobControls,
 		XYMedians = XYMedians,
-		sampleDistance = sampleDistance,
 		pcaInfo = pcaInfo,
 		pd = pd))
 }

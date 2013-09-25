@@ -8,8 +8,10 @@ function(beta, numPositions, XYExcluded = TRUE){
 		chrX <- names(locations[seqnames(locations)=="chrX"])
 		XY <- union(chrY,chrX)
 		
-		if (XYExcluded & sum(is.na(match(XY,rownames(beta))))!=length(XY)  ){
-			b <- beta[-match(XY,rownames(beta)),]
+		uXY <- intersect(chrX, rownames(beta))
+		
+		if (XYExcluded & length(uXY)!=0 ){
+			b <- beta[-match(uXY,rownames(beta)),]
 		} else {
 			b <- beta
 		}
