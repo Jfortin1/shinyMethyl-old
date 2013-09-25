@@ -70,24 +70,23 @@ function(RGSet){
     numberQuantiles <- 100
 	probs <- 1:numberQuantiles/100
 	
-	
-    greenNegativePooledA <- apply(getGreen(RGSet)[TypeI.Red$AddressA,], 2,
+	greenOOB <- rbind(getGreen(RGSet)[TypeI.Red$AddressA,], getGreen(RGSet)[TypeI.Red$AddressB,])
+    redOOB <- rbind(getRed(RGSet)[TypeI.Green$AddressA,], getRed(RGSet)[TypeI.Green$AddressB,])
+    
+    greenOOB <- apply(greenOOB, 2,
                                function(x)  quantile(x, probs=probs, na.rm=T)
                             )
-    greenNegativePooledB <- apply(getGreen(RGSet)[TypeI.Red$AddressB,], 2,
+   
+    redOOB <- apply(redOOB, 2,
                                function(x)  quantile(x, probs=probs, na.rm=T)
                             )
                             
-    redNegativePooledA   <- apply(getRed(RGSet)[TypeI.Green$AddressA,], 2,
-                               function(x)  quantile(x, probs=probs, na.rm=T)
-                            )
-    redNegativePooledB   <- apply(getRed(RGSet)[TypeI.Green$AddressB,], 2,
-                               function(x)  quantile(x, probs=probs, na.rm=T)
-                            )
-    
-    oobControls <- list(greenNegativePooledA,greenNegativePooledB,redNegativePooledA,redNegativePooledB)         
-    names(oobControls) <- c("oobGreenA","oobGreenB","oobRedA","oobRedB")
-                              
+                            
+     oob <- list(greenOOB = greenOOB,  redOOB = redOOB)            
+   
+   
+   
+                                 
 
 	# Defining the Type I, II Green and II Red probes:
 	probesI <- getProbeInfo(
@@ -194,8 +193,8 @@ function(RGSet){
 		cnQuantiles = cnQuantiles,
 		greenControls = greenControls,
 		redControls = redControls,
-		oobControls = oobControls,
 		XYMedians = XYMedians,
+		oob = oob,
 		pcaInfo = pcaInfo,
 		pd = pd))
 }
