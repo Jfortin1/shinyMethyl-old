@@ -99,7 +99,6 @@ returnSummaryNormData <-    function(normData){
 	}
 	
 
-	
 
 
 
