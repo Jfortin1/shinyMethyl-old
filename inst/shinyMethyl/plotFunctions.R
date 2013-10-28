@@ -233,17 +233,21 @@ addHoverPoints <- function(y, sampleNames, xSelected, ySelected){
 
 
 ### Plot of the densities
-densitiesPlot <- function(quantiles, 
-                                               main, xlab , xlim, ylim, bw, slideNames,
-                                                   solidLine = TRUE, mean = TRUE, slides = NULL, col, from, to ){
+densitiesPlot <- function(quantiles, main, xlab , xlim, ylim, bw, 
+                            slideNames, solidLine = TRUE, mean = TRUE, 
+                            slides = NULL, col, from, to ){
+                            	
     batches= slides
     meanSample = apply(quantiles,1,mean)
+    
     plot( density(meanSample, bw=bw) , 
                    main = main, 
-                       ylab = "Density", 
-                           xlab = xlab,
-                               col = "white",
-                                   xlim = xlim, ylim = ylim )
+                   ylab = "Density", 
+                   xlab = xlab,
+                   col = "white",
+                   xlim = xlim, 
+                   ylim = ylim
+    )
                  
                  
       if (solidLine){

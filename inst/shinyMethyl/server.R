@@ -157,24 +157,27 @@ sampleColors <- reactive(
 	   	                              solidLine = input$solidLine,
 	   	                              mean = input$mean,
 	   	                              slides = input$slides,
-	   	                              col = sampleColors(), from=from, to =to)
+	   	                              col = sampleColors(), from=-4, to =4)
 	   	
         abline(v=0,lty=3,lwd=3)
 	    abline(v=1,lty=3,lwd=3)
 	  
 	    addHoverDensity(y = controlStat, 
-                                      xSelected = input$controlsHover$x, 
-                                          ySelected = input$controlsHover$y, 
-                                              sampleNames = sampleNames,
-                                                     slides = input$slides, quantiles = betaQuantiles[[index]],
-                                                        bw = input$bandwidth,
-                                                           col = sampleColors()
+                                xSelected = input$controlsHover$x, 
+                                ySelected = input$controlsHover$y, 
+                                sampleNames = sampleNames,
+                                slides = input$slides, 
+                                quantiles = betaQuantiles[[index]],
+                                bw = input$bandwidth,
+                                col = sampleColors()
       )    
       
 	  } else {
-	  	from = -10
-	  	to = 10
-	  		densitiesPlot( quantiles = mQuantiles[[index]],
+	  	
+	  from = -10
+	  to = 10
+	  	
+	  densitiesPlot( quantiles = mQuantiles[[index]],
 	   	                              main = "M-VALUE DENSITIES", 
 	   	                              xlab = "M-values",
 	   	                              xlim  = c(-8,8),
@@ -184,18 +187,20 @@ sampleColors <- reactive(
 	   	                              solidLine = input$solidLine,
 	   	                              mean = input$mean,
 	   	                              slides = input$slides,
-	   	                              col = sampleColors(), from=-10, to=-10)
+	   	                              col = sampleColors(), from=from, to=to)
 
-	  	abline(v=0,lty=3,lwd=3)
+	  abline(v=0,lty=3,lwd=3)
 	  	
-	  	  addHoverDensity(y = controlStat, 
+	  addHoverDensity(y = controlStat, 
                                       xSelected = input$controlsHover$x, 
-                                          ySelected = input$controlsHover$y, 
-                                              sampleNames = sampleNames,
-                                                     slides = input$slides, quantiles = mQuantiles[[index]],
-                                                         bw  = input$bandwidth2,
-                                                             col = sampleColors()
-      )    
+                                      ySelected = input$controlsHover$y, 
+                                      sampleNames = sampleNames,
+                                      slides = input$slides, 
+                                      quantiles = mQuantiles[[index]],
+                                      bw  = input$bandwidth2,
+                                      col = sampleColors()
+      ) 
+         
 	 }
 
  })
