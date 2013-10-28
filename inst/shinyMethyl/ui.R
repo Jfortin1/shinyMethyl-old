@@ -131,11 +131,7 @@ headerPanel(HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georg
 	
 	checkboxInput("mean","Average density by slide"),
 
-	checkboxInput("solidLine","Solid lines", value=TRUE),
-
-
-	checkboxInput("coloredByBatch","Should data points be colored by plate?",value=TRUE)
-
+	checkboxInput("solidLine","Solid lines", value=TRUE)
 	),
 	
 	
