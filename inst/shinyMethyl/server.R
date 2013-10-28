@@ -298,6 +298,13 @@ data <- reactive({
 		givenGender <- as.character(covariates[,goodIndex])
 		givenGender <- substr(toupper(givenGender),1,1)
 		dataToReturn <- data.frame(predicted = predicted, given = givenGender )
+		agree = rep("YES",nrow(dataToReturn))
+		 for (i in 1:length(agree)){
+	    	if (dataToReturn[i,1]!=dataToReturn[,2] && !is.na(dataToReturn[i,2])){
+	    		agree[i] <- FALSE
+	    	}
+	    }
+	    dataToReturn$agree = agree	
    }
    else {
    	dataToReturn <- data.frame(predicted = predicted)
