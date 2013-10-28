@@ -538,6 +538,7 @@ plotDiscrepancyGenders <- function(cutoff, predictedGender, covariates, XYMedian
 		goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]
 		goodIndex <- match(goodColumn, colnames(covariates))
 		givenGender <- as.character(covariates[,goodIndex])
+		givenGender <- substr(toupper(givenGender),1,1)
 
         color <- predictedGender
         color[color == "M"] <- "lightskyblue"

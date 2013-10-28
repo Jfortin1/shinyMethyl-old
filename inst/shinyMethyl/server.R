@@ -288,8 +288,22 @@ data <- reactive({
 		cutoff <- input$genderCutoff$x
    }
    
-   return(returnPredictedGender(cutoff = cutoff, XYMedians))
+   
+   predicted = returnPredictedGender(cutoff = cutoff, XYMedians)
+   possibilities <- c("gender","Gender","sex","Sex","GENDER","SEX")
+   sum <- sum(possibilities %in% colnames(covariates))
+   if (sum>0){
+		goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]
+		goodIndex <- match(goodColumn, colnames(covariates))
+		givenGender <- as.character(covariates[,goodIndex])
+		givenGender <- substr(toupper(givenGender),1,1)
+		dataToReturn <- data.frame(predicted = predicted, given = givenGender )
+   }
+   else {
+   	dataToReturn <- data.frame(predicted = predicted)
+   }
 
+   return(dataToReturn)
  })
 
 
