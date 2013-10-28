@@ -334,7 +334,7 @@ output$downloadClusters <- downloadHandler(
 
  diffGenders <- reactive({
  	
- 	predictedGender <- data()
+ 	predictedGender <- as.character(data()$predicted)
  	diffs <- c()
  	possibilities <- c("gender","Gender","sex","Sex","GENDER","SEX")
 	sum <- sum(possibilities %in% colnames(covariates))
@@ -342,6 +342,7 @@ output$downloadClusters <- downloadHandler(
 	 	   goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]
 		   goodIndex <- match(goodColumn, colnames(covariates))
 		   givenGender <- as.character(covariates[,goodIndex])
+		   givenGender <- substr(toupper(givenGender),1,1)
 		   
 		    diffGender <- rep(FALSE,length(predictedGender))
 		  for (i in 1:length(predictedGender)){
