@@ -3,7 +3,7 @@ shinyMethyl
 
 Interactive visualization of the 450k methylation data
 
-Some changes and bugs fixed: 
+Some updates: 
 
 - Bug fixed: M-value densities are now visible
 - With the update of minfi in Bioconductor 2.13, IlluminaHumanMethylation450kannotation.ilmn.v1.2 is no longer supported. ShinyMethyl is now updated to be annotation free (shinyMethyl does not really need an annotation). Thanks to Kathleen Fisch for pointing that out.
