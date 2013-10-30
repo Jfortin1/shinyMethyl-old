@@ -1,7 +1,7 @@
 shinyMethyl
 ===========
 
-Interactive visualization of the 450k methylation data
+Welcome to the shinyMethyl, an interactive R application based on the shiny package for exploration of DNA methylation data.
 
 Online demo: http://spark.rstudio.com/jfortin/shinyMethyl/
 
