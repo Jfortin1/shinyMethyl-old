@@ -2,6 +2,7 @@ shinyMethyl
 ===========
 
 Interactive visualization of the 450k methylation data
+
 Online demo: http://spark.rstudio.com/jfortin/shinyMethyl/
 
 Some updates: 
