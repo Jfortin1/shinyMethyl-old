@@ -11,7 +11,6 @@ returnSummaryNormData <-    function(normData){
 	
     require(minfi)
     require(IlluminaHumanMethylation450kmanifest)
-    require(IlluminaHumanMethylation450kannotation.ilmn.v1.2)
     require(matrixStats)
     require(gmodels)
 
@@ -20,7 +19,6 @@ returnSummaryNormData <-    function(normData){
 	unmeth <-normData$unmethMatrix
 	beta <- meth / (meth+unmeth+100)
 	m <- log2( (meth+1)/(unmeth+1))
-	ann <- IlluminaHumanMethylation450kannotation.ilmn.v1.2
                               
 
 	# Defining the Type I, II Green and II Red probes:
@@ -34,10 +32,7 @@ returnSummaryNormData <-    function(normData){
 	        
 	### Chr probes:
 	data(shinymethylAnnotation, package="shinyMethyl")
-	# locations <- getLocations(ann)
-	# autosomal <- names(locations[as.vector(seqnames(locations) %in% paste0("chr", 1:22))])
-	# chrY <- names(locations[as.vector(seqnames(locations)=="chrY")])
-	# chrX <- names(locations[as.vector(seqnames(locations)=="chrX")])
+
 	        
 	probesIGrn <- intersect( probesI$Name[probesI$Color=="Grn"], autosomal )
 	probesIRed   <- intersect( probesI$Name[probesI$Color=="Red"], autosomal )

@@ -5,6 +5,7 @@
 \alias{mergeListOfMatrices}
 \alias{returnSummary450k}
 \alias{returnSummaryRGSet450k}
+\alias{extractFromTargets450k}
 \title{Internal shinyMethyl Functions}
 \description{
   Internal shinyMethyl functions

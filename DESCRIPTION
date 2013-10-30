@@ -5,7 +5,6 @@ Date: 2013-08-19
 Author: Jean-Philippe Fortin
 Maintainer: Jean-Philippe Fortin <jfortin@jhsph.edu>
 Depends: shiny, minfi (>= 1.6.0), IlluminaHumanMethylation450kmanifest, 
-         IlluminaHumanMethylation450kannotation.ilmn.v1.2,
          matrixStats, gmodels, RColorBrewer, R (>= 3.0.0)
 Suggests: shinyMethylData, minfiData  
 Description: Interactive tool for visualizing Illumina's 450k array data
