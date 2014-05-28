@@ -17,7 +17,7 @@
 \alias{orderByName}
 \alias{combine}
 %%methods
-\alias{combine,shinyMethylSet-method}
+\alias{combine,shinyMethylSet,shinyMethylSet-method}
 \alias{getMeth,shinyMethylSet-method}
 \alias{getUnmeth,shinyMethylSet-method}
 \alias{getBeta,shinyMethylSet-method}
