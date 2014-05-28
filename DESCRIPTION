@@ -9,4 +9,4 @@ Suggests: shinyMethylData, minfiData
 Description: Interactive tool for visualizing Illumina's 450k array data
 License: Artistic-2.0
 biocViews: DNAMethylation, Microarray, TwoChannel, Preprocessing, QualityControl
-url: https://github.com/Jfortin1/shinyMethyl
+Url: https://github.com/Jfortin1/shinyMethyl
