@@ -10,10 +10,10 @@ import(shiny)
 import(minfi)
 
 
-export(shinyCombine, runShinyMethyl, getGreenControls, getRedControls,
+export(runShinyMethyl, getGreenControls, getRedControls,
        orderByName, shinySummarize, getPCA, shinyMethylSet)
 
-exportMethods(shinySummarize, show, orderByName, getBeta, getM, getMeth,
+exportMethods(combine,shinySummarize, show, orderByName, getBeta, getM, getMeth,
               getUnmeth, getCN, getGreenControls, getRedControls, getPCA,
               pData, sampleNames)
 

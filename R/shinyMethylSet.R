@@ -175,14 +175,19 @@ setMethod("sampleNames",signature(object="shinyMethylSet"),
 ## df
 ## })
 
+
 .checkSex <- function(sex) {
     if(! (is.character(sex) && !any(is.na(sex)) && all(sex %in% c("M", "F"))))
         stop("'sex' seems wrong (needs to be a character, without missing values, of 'M' and 'F'")
     sex
 }
 
+setMethod("combine",signature(x="shinyMethylSet", y="shinyMethylSet"), function(x,y) {
+    .shinyCombine(x,y)
+})
+
 ## Function to combine two shinyMethylSet.
-shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
+.shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
     if (!is(shinyMethylSet1, "shinyMethylSet") | !is(shinyMethylSet2, "shinyMethylSet") ){
         stop("Both objects must be shinyMethylSet")
     }
