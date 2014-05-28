@@ -62,7 +62,7 @@ To launch \Biocpkg{shinyMethyl} with this TCGA dataset, enter the following comm
 <<shinyMethylData, eval=FALSE>>=
 library(shinyMethyl)
 library(shinyMethylData)
-runExampleTCGA()
+runShinyMethyl(summary.tcga.raw, summary.tcga.norm)
 @
 The interactive interface will take a few seconds to be launched in your default HTML browser. 
 

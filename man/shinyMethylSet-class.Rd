@@ -15,7 +15,9 @@
 \alias{pData}
 \alias{sampleNames}
 \alias{orderByName}
+\alias{combine}
 %%methods
+\alias{combine,shinyMethylSet,shinyMethylSet-method}
 \alias{getMeth,shinyMethylSet-method}
 \alias{getUnmeth,shinyMethylSet-method}
 \alias{getBeta,shinyMethylSet-method}
@@ -54,14 +56,12 @@ shinyMethylSet(sampleNames = new("character"),
 
 ## Data extraction / Accessors
 
+
 \S4method{getMeth}{shinyMethylSet}(object)
 \S4method{getUnmeth}{shinyMethylSet}(object)
 \S4method{getBeta}{shinyMethylSet}(object)
 \S4method{getM}{shinyMethylSet}(object)
 \S4method{getCN}{shinyMethylSet}(object)
-\S4method{getGreenControls}{shinyMethylSet}(object)
-\S4method{getRedControls}{shinyMethylSet}(object)
-\S4method{getPCA}{shinyMethylSet}(object)
 \S4method{pData}{shinyMethylSet}(object)
 \S4method{sampleNames}{shinyMethylSet}(object)
 }
@@ -115,6 +115,7 @@ arguments outlined above.
       as the sum of the methylation and unmethylation channel.}
     \item{\code{sampleNames(object)}}{Get
       the sampleNames}
+    \item{\code{combine(object1,object2)}}{combine \code{shinyMethylSet} objects}
   }
 }
 

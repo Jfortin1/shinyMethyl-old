@@ -1,8 +1,8 @@
-setGeneric("getGreenControls",
-           function(object, ...) standardGeneric("getGreenControls"))
-setGeneric("getRedControls",
-           function(object, ...) standardGeneric("getRedControls"))
-setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
+#setGeneric("getGreenControls",
+#           function(object, ...) standardGeneric("getGreenControls"))
+#setGeneric("getRedControls",
+#           function(object, ...) standardGeneric("getRedControls"))
+#setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
 setGeneric("orderByName", function(object, ...) standardGeneric("orderByName"))
 
 setClass("shinyMethylSet", 
@@ -132,20 +132,34 @@ setMethod("getCN",signature(object="shinyMethylSet"),
               object@cnQuantiles
           })
 
-setMethod("getGreenControls",signature(object="shinyMethylSet"),
-          function(object){
-              object@greenControls
-          })
 
-setMethod("getRedControls",signature(object="shinyMethylSet"),
-          function(object){
-              object@redControls
-          })
+getGreenControls <- function(shinyMethylSet){
+  shinyMethylSet@greenControls
+}
 
-setMethod("getPCA",signature(object="shinyMethylSet"),
-          function(object){
-              object@pca
-          })
+getRedControls <- function(shinyMethylSet){
+  shinyMethylSet@redControls
+}
+
+#setMethod("getGreenControls",signature(object="shinyMethylSet"),
+#          function(object){
+#              object@greenControls
+#          })
+
+#setMethod("getRedControls",signature(object="shinyMethylSet"),
+#          function(object){
+#              object@redControls
+#          })
+
+
+getPCA <- function(shinyMethylSet){
+  shinyMethylSet@pca
+}
+
+#setMethod("getPCA",signature(object="shinyMethylSet"),
+#          function(object){
+#              object@pca
+#          })
 
 setMethod("sampleNames",signature(object="shinyMethylSet"),
           function(object){
@@ -175,14 +189,19 @@ setMethod("sampleNames",signature(object="shinyMethylSet"),
 ## df
 ## })
 
+
 .checkSex <- function(sex) {
     if(! (is.character(sex) && !any(is.na(sex)) && all(sex %in% c("M", "F"))))
         stop("'sex' seems wrong (needs to be a character, without missing values, of 'M' and 'F'")
     sex
 }
 
+setMethod("combine",signature(x="shinyMethylSet", y="shinyMethylSet"), function(x,y) {
+    .shinyCombine(x,y)
+})
+
 ## Function to combine two shinyMethylSet.
-shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
+.shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
     if (!is(shinyMethylSet1, "shinyMethylSet") | !is(shinyMethylSet2, "shinyMethylSet") ){
         stop("Both objects must be shinyMethylSet")
     }
