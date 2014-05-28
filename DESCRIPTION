@@ -1,11 +1,11 @@
 Package: shinyMethyl
 Title: Interactive visualization for Illumina's 450k methylation arrays
-Version: 1.0.3
-Date: 2013-08-19
-Author: Jean-Philippe Fortin
+Version: 1.0.4
+Date: 2014-04-07
+Author: Jean-Philippe Fortin, Kasper D. Hansen
 Maintainer: Jean-Philippe Fortin <jfortin@jhsph.edu>
-Depends: shiny, minfi (>= 1.6.0), IlluminaHumanMethylation450kmanifest, 
-         matrixStats, gmodels, RColorBrewer, R (>= 3.0.0)
+Depends: methods, shiny, minfi (>= 1.6.0), IlluminaHumanMethylation450kmanifest, 
+         matrixStats, gmodels, RColorBrewer, knitr, knitrBootstrap, R (>= 3.0.0)
 Suggests: shinyMethylData, minfiData  
 Description: Interactive tool for visualizing Illumina's 450k array data
 License: Artistic-2.0

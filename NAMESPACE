@@ -1,1 +1,17 @@
-export(runShinyMethyl, extractFromRGSet450k, extractFromNormData,  runExampleTCGA)
+import(methods)
+import(matrixStats)
+importMethodsFrom(minfi)
+import(IlluminaHumanMethylation450kmanifest)
+import(RColorBrewer)
+import(gmodels)
+import(knitr)
+import(knitrBootstrap)
+import(shiny)
+import(minfi)
+
+
+export(shinyCombine, runShinyMethyl, getGreenControls, getRedControls, orderByName, shinySummarize, getPCA, shinyMethylSet,runExampleTCGA)
+
+exportMethods(shinySummarize, show, orderByName, getBeta, getM, getMeth, getUnmeth, getCN, getGreenControls, getRedControls, getPCA, pData, sampleNames)
+
+exportClasses(shinyMethylSet)
