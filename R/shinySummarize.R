@@ -1,4 +1,5 @@
-setGeneric("shinySummarize", function(object, ...) standardGeneric("shinySummarize"))
+setGeneric("shinySummarize",
+           function(object, ...) standardGeneric("shinySummarize"))
 
 setMethod("shinySummarize", signature(object = "RGChannelSet"),
           function(object) {

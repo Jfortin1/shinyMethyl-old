@@ -41,17 +41,17 @@
 
 
 shinyMethylSet(sampleNames = new("character"), 
-				   phenotype = new("data.frame"),  
-				   mQuantiles = new(vector("list",5)),
-			 	   betaQuantiles = new(vector("list",5)),
-			 	   methQuantiles = new(vector("list",5)),
-			 	   unmethQuantiles = new(vector("list",5)),
-			 	   cnQuantiles = new(vector("list",5)),
-			 	   greenControls = new(vector("list",12)),
-			 	   redControls = new(vector("list",12)),
-			 	   pca = new("list"),
-			 	   originObject = new("character"))
-						  
+               phenotype = new("data.frame"),  
+               mQuantiles = new(vector("list",5)),
+               betaQuantiles = new(vector("list",5)),
+               methQuantiles = new(vector("list",5)),
+               unmethQuantiles = new(vector("list",5)),
+               cnQuantiles = new(vector("list",5)),
+               greenControls = new(vector("list",12)),
+               redControls = new(vector("list",12)),
+               pca = new("list"),
+               originObject = new("character"))
+
 ## Data extraction / Accessors
 
 \S4method{getMeth}{shinyMethylSet}(object)
@@ -70,22 +70,30 @@ shinyMethylSet(sampleNames = new("character"),
   \item{object}{A \code{shinyMethylSet}.}
   \item{sampleNames}{A character vector}
   \item{phenotype}{A \code{data.frame} object.}
-  \item{methQuantiles}{A list of 5 matrices containing several quantiles for the methylation values (between zero and infinity) separated by probe tpye and autosomal/sex probes. Each row is a quantile and each column is a sample.}
+  \item{methQuantiles}{A list of 5 matrices containing several quantiles
+    for the methylation values (between zero and infinity) separated by
+    probe tpye and autosomal/sex probes. Each row is a quantile and each
+    column is a sample.}
   \item{unmethQuantiles}{Similar to \code{Meth}}
   \item{betaQuantiles}{Similar to \code{Meth} but for Beta-values}
   \item{mQuantiles}{Similar to \code{Meth} but for M-values}
   \item{cnQuantiles}{Similar to \code{Meth} but for Copy Number}
-  \item{greenControls}{A list containing the matrices of different raw control probes intensities in the green channel}
+  \item{greenControls}{A list containing the matrices of different raw
+    control probes intensities in the green channel} 
   \item{redControls}{Similar to \code{greenControls} but for the red channel}
-  \item{pca}{List containing the PCA scores for the 20,000 most variable CpGs and the percentages of variance explained}
-  \item{originObject}{Name of the minfi object from which the data were extracted}
+  \item{pca}{List containing the PCA scores for the 20,000 most variable
+    CpGs and the percentages of variance explained} 
+  \item{originObject}{Name of the minfi object from which the data were
+    extracted} 
 }
 
 \details{
-  These class is a representation of a
-  \code{Meth} matrix and a \code{Unmeth} matrix linked to a \code{pData} data frame.
+  These class is a representation of a \code{Meth} matrix and a
+  \code{Unmeth} matrix linked to a \code{pData} data frame.
 
-  A creationMethod slot is present to indicate from which object type the \code{shinyMethylSet} has been created: either a \code{RGChannelSet} or \code{GenomicRatioSet} 
+  A creationMethod slot is present to indicate from which object type
+  the \code{shinyMethylSet} has been created: either a
+  \code{RGChannelSet} or \code{GenomicRatioSet}
   
   A \code{MethylSet} stores \code{meth} and \code{Unmeth}. }
 
@@ -114,7 +122,8 @@ arguments outlined above.
 
 \seealso{
   Objects of this class are typically created by using the function
-  \code{\link{shinySummarize}} on a \code{\link{RGChannelSet}} or \code{\link{GenomicRatioSet}}.}
+  \code{\link{shinySummarize}} on a \code{\link{RGChannelSet}} or
+  \code{\link{GenomicRatioSet}}.}
 
 \examples{
   showClass("shinyMethylSet")

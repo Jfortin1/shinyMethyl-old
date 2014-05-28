@@ -1,5 +1,7 @@
-setGeneric("getGreenControls", function(object, ...) standardGeneric("getGreenControls"))
-setGeneric("getRedControls", function(object, ...) standardGeneric("getRedControls"))
+setGeneric("getGreenControls",
+           function(object, ...) standardGeneric("getGreenControls"))
+setGeneric("getRedControls",
+           function(object, ...) standardGeneric("getRedControls"))
 setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
 setGeneric("orderByName", function(object, ...) standardGeneric("orderByName"))
 
@@ -190,11 +192,16 @@ shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
     
     ## Merging the quantile matrices
     for (i in 1:5){
-        c.shinyMethylSet@mQuantiles[[i]] <- cbind(shinyMethylSet1@mQuantiles[[i]],shinyMethylSet2@mQuantiles[[i]])
-        c.shinyMethylSet@betaQuantiles[[i]] <- cbind(shinyMethylSet1@betaQuantiles[[i]],shinyMethylSet2@betaQuantiles[[i]])
-        c.shinyMethylSet@methQuantiles[[i]] <- cbind(shinyMethylSet1@methQuantiles[[i]],shinyMethylSet2@methQuantiles[[i]])
-        c.shinyMethylSet@unmethQuantiles[[i]] <- cbind(shinyMethylSet1@unmethQuantiles[[i]],shinyMethylSet2@unmethQuantiles[[i]])
-        c.shinyMethylSet@cnQuantiles[[i]] <- cbind(shinyMethylSet1@cnQuantiles[[i]],shinyMethylSet2@cnQuantiles[[i]])
+        c.shinyMethylSet@mQuantiles[[i]] <- cbind(shinyMethylSet1@mQuantiles[[i]],
+                                                  shinyMethylSet2@mQuantiles[[i]])
+        c.shinyMethylSet@betaQuantiles[[i]] <- cbind(shinyMethylSet1@betaQuantiles[[i]],
+                                                     shinyMethylSet2@betaQuantiles[[i]])
+        c.shinyMethylSet@methQuantiles[[i]] <- cbind(shinyMethylSet1@methQuantiles[[i]],
+                                                     shinyMethylSet2@methQuantiles[[i]])
+        c.shinyMethylSet@unmethQuantiles[[i]] <- cbind(shinyMethylSet1@unmethQuantiles[[i]],
+                                                       shinyMethylSet2@unmethQuantiles[[i]])
+        c.shinyMethylSet@cnQuantiles[[i]] <- cbind(shinyMethylSet1@cnQuantiles[[i]],
+                                                   shinyMethylSet2@cnQuantiles[[i]])
     }
     names(c.shinyMethylSet@mQuantiles) <- names(c.shinyMethylSet@betaQuantiles) <- 
         names(c.shinyMethylSet@methQuantiles) <- names(c.shinyMethylSet@unmethQuantiles) <-
@@ -202,10 +209,13 @@ shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
     
     ## Merging the control matrices
     for (i in 1:14){
-        c.shinyMethylSet@greenControls[[i]] <- cbind(shinyMethylSet1@greenControls[[i]],shinyMethylSet2@greenControls[[i]])
-        c.shinyMethylSet@redControls[[i]] <- cbind(shinyMethylSet1@redControls[[i]],shinyMethylSet2@redControls[[i]])
+        c.shinyMethylSet@greenControls[[i]] <- cbind(shinyMethylSet1@greenControls[[i]],
+                                                     shinyMethylSet2@greenControls[[i]])
+        c.shinyMethylSet@redControls[[i]] <- cbind(shinyMethylSet1@redControls[[i]],
+                                                   shinyMethylSet2@redControls[[i]])
     }
-    names(c.shinyMethylSet@greenControls) <- names(c.shinyMethylSet@redControls) <- names(shinyMethylSet1@redControls)
+    names(c.shinyMethylSet@greenControls) <- names(c.shinyMethylSet@redControls) <-
+        names(shinyMethylSet1@redControls)
     c.shinyMethylSet@pca <- list() # PCA information is lost. 
     c.shinyMethylSet@originObject <- "Merging"
     c.shinyMethylSet
