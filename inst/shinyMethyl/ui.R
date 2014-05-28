@@ -392,26 +392,26 @@ if (exists("covariates")){
 
 
 
-		tabPanel("Reproducible Report",
+# 		tabPanel("Reproducible Report",
 		
 		
 	
-     HTML("<br>
-  		<p style=\"width:500px;text-align:justify\"><span style=\"color:#000000;font-size:16px\">
-  		<span style = \"font-weight:bold\">Reproducible Report</span><br><br>
-  		<span style=\"font-style:italic\">shinyMethyl</span> visualizations are reproducible in the sense that every plot can be reproduced with R functions included in the package, with the tuning parameters specified by the user.
-  		<br><br>
-          </p>"),  
+#      HTML("<br>
+#   		<p style=\"width:500px;text-align:justify\"><span style=\"color:#000000;font-size:16px\">
+#   		<span style = \"font-weight:bold\">Reproducible Report</span><br><br>
+#   		<span style=\"font-style:italic\">shinyMethyl</span> visualizations are reproducible in the sense that every plot can be reproduced with R functions included in the package, with the tuning parameters specified by the user.
+#   		<br><br>
+#           </p>"),  
 
-numericInput("gender.cutoff.markdown", "Enter the prediction threshold used in the Gender clustering panel:", -0.3, min=-5, max=5, step=0.1),
+# numericInput("gender.cutoff.markdown", "Enter the prediction threshold used in the Gender clustering panel:", -0.3, min=-5, max=5, step=0.1),
 
-		actionButton('create.report',"Create HTML Report"),
+# 		actionButton('create.report',"Create HTML Report"),
 		
-		  verbatimTextOutput(outputId = "reportPrint")
+# 		  verbatimTextOutput(outputId = "reportPrint")
 		
 		
 
-		),
+# 		),
 
 ######################   ----   About  --------  
 
