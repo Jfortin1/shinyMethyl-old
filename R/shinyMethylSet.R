@@ -17,7 +17,7 @@ setClass("shinyMethylSet",
                         originObject = "character"
                         )
          )
-	
+
 shinyMethylSet <- function(sampleNames = new("character"), 
                            phenotype = new("data.frame"),  
                            mQuantiles = new(vector("list",5)),
@@ -77,8 +77,8 @@ setMethod("orderByName", signature(object = "shinyMethylSet"),
               }
 
               object@sampleNames <- object@sampleNames[o]
-		object@pca$scores  <- object@pca$scores[o,]
-		object@pca$percs  <- object@pca$percs[o]
+              object@pca$scores  <- object@pca$scores[o,]
+              object@pca$percs  <- object@pca$percs[o]
               
               object@phenotype <- object@phenotype[o,]
               
@@ -179,8 +179,8 @@ setMethod("sampleNames",signature(object="shinyMethylSet"),
     sex
 }
 
-## Function to combine two shinyMethylSet. 	
-shinyCombine <- 	function(shinyMethylSet1, shinyMethylSet2){
+## Function to combine two shinyMethylSet.
+shinyCombine <- function(shinyMethylSet1, shinyMethylSet2){
     if (!is(shinyMethylSet1, "shinyMethylSet") | !is(shinyMethylSet2, "shinyMethylSet") ){
         stop("Both objects must be shinyMethylSet")
     }

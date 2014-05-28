@@ -1,5 +1,5 @@
 setGeneric("shinySummarize", function(object, ...) standardGeneric("shinySummarize"))
- 			
+
 setMethod("shinySummarize", signature(object = "RGChannelSet"),
           function(object) {
               .createIndices <- function(object, betaMatrix) {
@@ -96,7 +96,7 @@ setMethod("shinySummarize", signature(object = "RGChannelSet"),
               rm(methMatrix)
               rm(unmethMatrix)
               rm(mMatrix)
-              rm(cnMatrix)	
+              rm(cnMatrix)
               
               
               
@@ -155,7 +155,7 @@ setMethod("shinySummarize", signature(object = "GenomicRatioSet"),
               cnMatrix   <- minfi::getCN(object)
               
               probe.indices <- .createIndices(object, betaMatrix)
-              autosomal <- unlist(probe.indices[1:3])	
+              autosomal <- unlist(probe.indices[1:3])
               probs <- seq(from = 0, to = 1, length.out = 500)
               
               betaQuantiles <- vector("list", length(probe.indices)) 
