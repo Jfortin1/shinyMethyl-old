@@ -1,7 +1,7 @@
-setGeneric("getGreenControls",
-           function(object, ...) standardGeneric("getGreenControls"))
-setGeneric("getRedControls",
-           function(object, ...) standardGeneric("getRedControls"))
+#setGeneric("getGreenControls",
+#           function(object, ...) standardGeneric("getGreenControls"))
+#setGeneric("getRedControls",
+#           function(object, ...) standardGeneric("getRedControls"))
 setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
 setGeneric("orderByName", function(object, ...) standardGeneric("orderByName"))
 
@@ -132,20 +132,34 @@ setMethod("getCN",signature(object="shinyMethylSet"),
               object@cnQuantiles
           })
 
-setMethod("getGreenControls",signature(object="shinyMethylSet"),
-          function(object){
-              object@greenControls
-          })
 
-setMethod("getRedControls",signature(object="shinyMethylSet"),
-          function(object){
-              object@redControls
-          })
+getGreenControls <- function(shinyMethylSet){
+  shinyMethylSet@greenControls
+}
 
-setMethod("getPCA",signature(object="shinyMethylSet"),
-          function(object){
-              object@pca
-          })
+getRedControls <- function(shinyMethylSet){
+  shinyMethylSet@redControls
+}
+
+#setMethod("getGreenControls",signature(object="shinyMethylSet"),
+#          function(object){
+#              object@greenControls
+#          })
+
+#setMethod("getRedControls",signature(object="shinyMethylSet"),
+#          function(object){
+#              object@redControls
+#          })
+
+
+getPCA <- function(shinyMethylSet){
+  shinyMethylSet@pca
+}
+
+#setMethod("getPCA",signature(object="shinyMethylSet"),
+#          function(object){
+#              object@pca
+#          })
 
 setMethod("sampleNames",signature(object="shinyMethylSet"),
           function(object){

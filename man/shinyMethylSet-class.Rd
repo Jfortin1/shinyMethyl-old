@@ -62,9 +62,6 @@ shinyMethylSet(sampleNames = new("character"),
 \S4method{getBeta}{shinyMethylSet}(object)
 \S4method{getM}{shinyMethylSet}(object)
 \S4method{getCN}{shinyMethylSet}(object)
-\S4method{getGreenControls}{shinyMethylSet}(object)
-\S4method{getRedControls}{shinyMethylSet}(object)
-\S4method{getPCA}{shinyMethylSet}(object)
 \S4method{pData}{shinyMethylSet}(object)
 \S4method{sampleNames}{shinyMethylSet}(object)
 }

@@ -14,7 +14,7 @@ export(runShinyMethyl, getGreenControls, getRedControls,
        orderByName, shinySummarize, getPCA, shinyMethylSet)
 
 exportMethods(combine,shinySummarize, show, orderByName, getBeta, getM, getMeth,
-              getUnmeth, getCN, getGreenControls, getRedControls, getPCA,
+              getUnmeth, getCN,
               pData, sampleNames)
 
 exportClasses(shinyMethylSet)
