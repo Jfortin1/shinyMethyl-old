@@ -3,8 +3,6 @@ import(matrixStats)
 importMethodsFrom(minfi)
 import(IlluminaHumanMethylation450kmanifest)
 import(RColorBrewer)
-import(knitr)
-import(knitrBootstrap)
 import(shiny)
 import(minfi)
 

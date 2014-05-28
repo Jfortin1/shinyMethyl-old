@@ -6,7 +6,7 @@ Authors@R: c(person("Jean-Phillipe", "Fortin", role = c("cre", "aut"),
              person(c("Kasper", "Daniel"), "Hansen", role = "aut"))
 Depends: methods, shiny, minfi (>= 1.6.0),
         IlluminaHumanMethylation450kmanifest, matrixStats,
-        RColorBrewer, knitr, knitrBootstrap, R (>= 3.0.0)
+        RColorBrewer, R (>= 3.0.0)
 Suggests: shinyMethylData, minfiData, BiocStyle
 Description: Interactive tool for visualizing Illumina's 450k array data
 Url: https://github.com/Jfortin1/shinyMethyl
