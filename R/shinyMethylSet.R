@@ -20,6 +20,121 @@ setClass("shinyMethylSet",
                         )
          )
 
+setValidity("shinyMethylSet", function(object) { 
+    msg <- NULL
+    
+    phenotype <- object@phenotype
+    methQuantiles <- object@methQuantiles
+    unmethQuantiles <- object@unmethQuantiles
+    betaQuantiles <- object@betaQuantiles
+    mQuantiles <- object@mQuantiles
+    cnQuantiles <- object@cnQuantiles 
+    sampleNames <- object@sampleNames
+    greenControls <- object@greenControls
+    redControls   <- object@redControls
+    pca <- object@pca
+
+    # Validity for phenotype
+    if (!is.null(phenotype)){
+      if (length(sampleNames) != nrow(phenotype)){
+        msg <- "Phenotype data.frame must have the same length as the sampleNames"
+      }
+
+       if (sum(!(sampleNames %in% rownames(phenotype)))>0){
+        msg <- "rownames of the phenotype data.frame must correspond to the sampleNames"
+       }
+    }
+
+    # Validity for the quantiles list
+    quantile.names <- c("IGrn", "IRed", "II", "X", "Y")
+    if (!all.equal(names(mQuantiles),quantile.names) | !all.equal(names(betaQuantiles),quantile.names) |
+      !all.equal(names(cnQuantiles),quantile.names)){
+      msg <- "Names of mQuantiles, betaQuantiles and cnQuantiles must be c(\"IGrn\", \"IRed\", \"II\", \"X\", \"Y\")"
+    }
+
+    if (!is.null(methQuantiles) & !is.null(unmethQuantiles)){
+      if (!all.equal(names(methQuantiles),quantile.names) | !all.equal(names(unmethQuantiles),quantile.names)){
+         msg <- "Names of methQuantiles and unmethQuantiles must be c(\"IGrn\", \"IRed\", \"II\", \"X\", \"Y\")"
+      }
+    }
+
+    dim.quantile.validity <- function(quantiles, n.col, quantiles.name){
+      n.row.vector <- as.numeric(unlist(lapply(quantiles,FUN=nrow)))
+      if (length(unique(n.row.vector)) != 1){
+        msg <- paste0("All matrices of the ",quantiles.name, " quantiles list must have the same number of rows")
+        return(msg)
+      }
+      n.col.vector <- as.numeric(unlist(lapply(quantiles, FUN=ncol)))
+      if (length(unique(n.col.vector)) != 1){
+        msg <- paste0("All matrices of the ",quantiles.name, " quantiles list must have the same number of cols")
+        return(msg)
+      } else {
+        if (unique(n.col.vector) != n.col){
+          msg <- paste0("All matrices of the ",quantiles.name, 
+            " quantiles list must have the number of columns equal to the length of the sampleNames")
+          return(msg)
+        }
+      }
+
+    }
+
+    msg <- dim.quantile.validity(mQuantiles, n.col = n, "mQuantiles")
+    msg <- dim.quantile.validity(betaQuantiles, n.col = n, "betaQuantiles")
+    msg <- dim.quantile.validity(cnQuantiles, n.col = n,  "cnQuantiles")
+
+
+    if (!is.null(methQuantiles) & !is.null(unmethQuantiles)){
+      msg <- dim.quantile.validity(methQuantiles, n.col=n, "methQuantiles")
+      msg <- dim.quantile.validity(unmethQuantiles, n.col=n, "unmethQuantiles")
+    }
+
+    # Validity for controls:
+    control.names <- c("BISULFITE CONVERSION I", "BISULFITE CONVERSION II", 
+      "EXTENSION", "HYBRIDIZATION", "NEGATIVE", "NON-POLYMORPHIC", "NORM_A", 
+      "NORM_C", "NORM_G", "NORM_T", "SPECIFICITY I", "SPECIFICITY II", 
+      "TARGET REMOVAL", "STAINING")
+    row.n <- c(12, 4, 4, 3, 613, 4, 32, 61, 32, 61, 12, 3, 2, 4)
+
+    if (length(greenControls) != 14 | length(redControls) != 14){
+      msg <- "The greenControls and redControls lists must be of length 14"
+    }
+
+    if (!all.equal(control.names,names(greenControls)) | !all.equal(control.names,names(redControls))){
+      msg <- "Green controls and red controls names don't match the 450k control probes names defined in shinyMethyl"
+    }
+
+    if (!all.equal(as.numeric(unlist(lapply(greenControls,FUN=nrow))),row.n) | 
+      !all.equal(as.numeric(unlist(lapply(redControls,FUN=nrow))),row.n)){
+      msg <- "Green controls and red controls matrices don't have the right number of rows"
+    }
+
+    # Validity for PCA
+    if (!is.null(pca)){
+
+      if (!all.equal(names(pca), c("scores","percs"))){
+        msg <- "Names of the pca list must be c(\"scores\",\"percs\")"
+      }
+      scores <- pca$scores
+      percs  <- pca$percs
+
+      if (ncol(scores) !=n | nrow(scores) !=n){
+        msg <- "nrow(pca$scores) and ncol(pca$scores) must be equal to the length of sampleNames"
+      }
+
+      if (length(percs)!=n){
+        msg <- "Length of pca$percs must be equal to the length of sampleNames"
+      }
+
+      if (sum(!(rownames(scores) %in% sampleNames))!=0) {
+        msg <- "Rownames of pca$scores must be the sampleNames"
+      }
+    }
+
+    if (is.null(msg)) TRUE else msg
+}) 
+
+
+
 shinyMethylSet <- function(sampleNames = new("character"), 
                            phenotype = new("data.frame"),  
                            mQuantiles = new(vector("list",5)),
