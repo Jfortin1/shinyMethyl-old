@@ -178,7 +178,7 @@ setMethod("shinySummarize", signature(object = "GenomicRatioSet"),
               autMatrix <- betaMatrix[autosomal,]
               rm(betaMatrix)
               o <- order(-rowVars(autMatrix))[1:numPositions]
-              pca <- fast.prcomp(t(autMatrix[o,]))
+              pca <- prcomp(t(autMatrix[o,]))
               pca <- list(scores = pca$x, percs = (pca$sdev^2)/(sum(pca$sdev^2))*100)
               names(pca$percs) <- colnames(object)
 
