@@ -53,7 +53,7 @@ setValidity("shinyMethylSet", function(object) {
       msg <- "Names of mQuantiles, betaQuantiles and cnQuantiles must be c(\"IGrn\", \"IRed\", \"II\", \"X\", \"Y\")"
     }
 
-    if (object$originObject != "GenomicRatioSet"){
+    if (object@originObject != "GenomicRatioSet"){
       if (!all.equal(names(methQuantiles),quantile.names) | !all.equal(names(unmethQuantiles),quantile.names)){
          msg <- "Names of methQuantiles and unmethQuantiles must be c(\"IGrn\", \"IRed\", \"II\", \"X\", \"Y\")"
       }

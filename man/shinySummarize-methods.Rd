@@ -42,5 +42,6 @@ if (require(minfiData)){
 }
 
 
+
 \keyword{methods}
 
