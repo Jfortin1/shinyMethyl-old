@@ -53,7 +53,7 @@ setValidity("shinyMethylSet", function(object) {
       msg <- "Names of mQuantiles, betaQuantiles and cnQuantiles must be c(\"IGrn\", \"IRed\", \"II\", \"X\", \"Y\")"
     }
 
-    if (!is.null(methQuantiles) & !is.null(unmethQuantiles)){
+    if (object$originObject != "GenomicRatioSet"){
       if (!all.equal(names(methQuantiles),quantile.names) | !all.equal(names(unmethQuantiles),quantile.names)){
          msg <- "Names of methQuantiles and unmethQuantiles must be c(\"IGrn\", \"IRed\", \"II\", \"X\", \"Y\")"
       }
@@ -84,7 +84,7 @@ setValidity("shinyMethylSet", function(object) {
     msg <- dim.quantile.validity(cnQuantiles, n.col = n,  "cnQuantiles")
 
 
-    if (!is.null(methQuantiles) & !is.null(unmethQuantiles)){
+    if (object$originObject != "GenomicRatioSet"){
       msg <- dim.quantile.validity(methQuantiles, n.col=n, "methQuantiles")
       msg <- dim.quantile.validity(unmethQuantiles, n.col=n, "unmethQuantiles")
     }
@@ -96,21 +96,23 @@ setValidity("shinyMethylSet", function(object) {
       "TARGET REMOVAL", "STAINING")
     row.n <- c(12, 4, 4, 3, 613, 4, 32, 61, 32, 61, 12, 3, 2, 4)
 
-    if (length(greenControls) != 14 | length(redControls) != 14){
-      msg <- "The greenControls and redControls lists must be of length 14"
-    }
 
-    if (!all.equal(control.names,names(greenControls)) | !all.equal(control.names,names(redControls))){
-      msg <- "Green controls and red controls names don't match the 450k control probes names defined in shinyMethyl"
-    }
+    if (object$originObject != "GenomicRatioSet"){
+      if (length(greenControls) != 14 | length(redControls) != 14){
+        msg <- "The greenControls and redControls lists must be of length 14"
+      }
 
-    if (!all.equal(as.numeric(unlist(lapply(greenControls,FUN=nrow))),row.n) | 
-      !all.equal(as.numeric(unlist(lapply(redControls,FUN=nrow))),row.n)){
-      msg <- "Green controls and red controls matrices don't have the right number of rows"
-    }
+      if (!all.equal(control.names,names(greenControls)) | !all.equal(control.names,names(redControls))){
+        msg <- "Green controls and red controls names don't match the 450k control probes names defined in shinyMethyl"
+      }
 
-    # Validity for PCA
-    if (!is.null(pca)){
+      if (!all.equal(as.numeric(unlist(lapply(greenControls,FUN=nrow))),row.n) | 
+        !all.equal(as.numeric(unlist(lapply(redControls,FUN=nrow))),row.n)){
+        msg <- "Green controls and red controls matrices don't have the right number of rows"
+      }
+
+       # Validity for PCA
+   
 
       if (!all.equal(names(pca), c("scores","percs"))){
         msg <- "Names of the pca list must be c(\"scores\",\"percs\")"
@@ -129,8 +131,10 @@ setValidity("shinyMethylSet", function(object) {
       if (sum(!(rownames(scores) %in% sampleNames))!=0) {
         msg <- "Rownames of pca$scores must be the sampleNames"
       }
+
     }
 
+   
     if (is.null(msg)) TRUE else msg
 }) 
 
@@ -215,7 +219,7 @@ setMethod("show",signature(object="shinyMethylSet"),
               cat(" Number of samples: ",n, "\n")
               nCovs <- ncol(object@phenotype)
               cat(" Phenotype: ",nCovs, "covariates \n")
-              cat(" Method: ", object@originObject, "\n")
+              cat(" Origin object: ", object@originObject, "\n")
           })
 
 setMethod("getBeta",signature(object="shinyMethylSet"),
