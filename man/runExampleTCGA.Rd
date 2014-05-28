@@ -21,7 +21,8 @@ Jean-Philippe Fortin
 }
 \seealso{
 \code{\link{runShinyMethyl}}
-\code{\link[shinyMethylData]{TCGAExtractedData}}
+\code{\link[shinyMethylData]{summary.tcga.raw}}
+\code{\link[shinyMethylData]{summary.tcga.norm}}
 }
 \examples{
 \dontrun{

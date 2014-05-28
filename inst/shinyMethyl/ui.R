@@ -1,75 +1,38 @@
 #### Created by Jean-Philippe Fortin
-#### Aug 19 2013
+#### March 28, 2014
 
-
-library(RColorBrewer)
 
 
 ############################################################
 
 
-betaQuantiles <- shinyMethylData$betaQuantiles
-mQuantiles <- shinyMethylData$mQuantiles
-methQuantiles <- shinyMethylData$methQuantiles
-unmethQuantiles <- shinyMethylData$unmethQuantiles
-greenControls <- shinyMethylData$greenControls
-redControls <- shinyMethylData$redControls
-# oobControls <- shinyMethylData$oobControls
-XYMedians <- shinyMethylData$XYMedians
-sampleDistance <- shinyMethylData$sampleDistance
-covariates <- shinyMethylData$pd
-covariates <- covariates[match(colnames(shinyMethylData$betaQuantiles$II),rownames(covariates)),]
+betaQuantiles   <- getBeta(shinyMethylSet1)
+mQuantiles      <- getM(shinyMethylSet1)
+methQuantiles   <- getMeth(shinyMethylSet1)
+unmethQuantiles <- getUnmeth(shinyMethylSet1)
+cnQuantiles     <- getCN(shinyMethylSet1)
+greenControls   <- getGreenControls(shinyMethylSet1)
+redControls     <- getRedControls(shinyMethylSet1)
+covariates      <<-pData(shinyMethylSet1)
+pca             <- getPCA(shinyMethylSet1)$scores
+sampleNames     <- sampleNames(shinyMethylSet1)
 
-	sampleNames <- colnames(betaQuantiles[[1]])
-	slideNames     <- substr(sampleNames,1,10)
-	arrayNames    <- substr(sampleNames,12,17)
-	plateNames <- substr(sampleNames,1,7)
-	 
-	
-	designInfo <- data.frame(sampleNames = sampleNames,
-												slideNames  = slideNames,
-												arrayNames = arrayNames,
-												plateNames = plateNames)
-	
-	#### Ordering:
-	designInfo <- designInfo[order(plateNames,slideNames,arrayNames), ]
-	order <- match(designInfo$sampleNames, 
-				                colnames(betaQuantiles[[1]]))
+slideNames      <- substr(sampleNames,1,10)
+arrayNames      <- substr(sampleNames,12,17)
+plateNames      <- substr(sampleNames,1,6)
+controlNames    <- names(greenControls)
+slides <- unique(slideNames)
+method <- shinyMethylSet1@originObject
+
+sampleColors <<- as.numeric(as.factor(plateNames))
 
 
-    sampleNames <- designInfo$sampleNames
-	slideNames     <- designInfo$slideNames
-	arrayNames    <- designInfo$arrayNames
-    plateNames    <- designInfo$plateNames
-	
-	plate <- as.numeric(as.factor(plateNames))
-	slides <- unique(slideNames)
-	names(slideNames) <- slideNames
-	names(slides) <- slides
-
-	for (i in 1:3){
-		betaQuantiles[[i]]         <- betaQuantiles[[i]][,order]
-		mQuantiles[[i]]             <- mQuantiles[[i]][,order]
-		methQuantiles[[i]]        <- methQuantiles[[i]][,order]
-		unmethQuantiles[[i]]    <- unmethQuantiles[[i]][,order]
-	}
-	
-	for (i in 1:12){
-		greenControls[[i]]    <- greenControls[[i]][,order]
-		redControls[[i]]        <- redControls[[i]][,order]
-	}
-
-   	XYMedians$medianXU = XYMedians$medianXU[order]
-	XYMedians$medianXM = XYMedians$medianXM[order]
-	XYMedians$medianYU = XYMedians$medianYU[order]
-	XYMedians$medianYM = XYMedians$medianYM[order]
-	
-   covariates <- covariates[order,]
-   
-    controlNames <- names(greenControls)
-
-
-
+# In the case covariates is empty:
+if (ncol(covariates)==0){
+	covariates <- data.frame(slide = slideNames, plate = plateNames)
+	rownames(covariates) <- sampleNames
+	covariates <<- covariates
+}
 
 
 shinyUI(pageWithSidebar(
@@ -99,26 +62,36 @@ headerPanel(HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georg
 
 
 	wellPanel(
+	
+	HTML("<p><span style=\"color:#336666;font-size:16px\">
+			      Color choice:</span></p>"),
+	
+	selectInput("colorChoice", "Color set:",
+	       list("Pault","Rainbow","Set1","Set2","Set3","Paired","Dark2","Accent"),
+	           multiple=FALSE, 
+	               selected="Set1"),
+   
+			    
 	  HTML("<p><span style=\"color:#336666;font-size:16px\">
-			      Quality control exploration</span></p>"),
+			      Quality control exploration:</span></p>"),
 
 	selectInput("mOrBeta", "Methylation measure:",
 	       list("Beta-value","M-value"),
 	           multiple=FALSE, 
-	               selected="Beta-value"),
-	    selectInput("probeType", "Choose a probe type:", 
-			                	choices = c("I Green","I Red","II"),
-			                	selected="II"),
+	               selected="M-value"),
+	    selectInput("probeType", "Choose a probe type for the density curves:", 
+			                	choices = c("I Green","I Red","II","X","Y"),
+			                	selected="I Green"),
 	    selectInput("controlType", "Choose a control type:", 
 			                	choices = controlNames,selected=controlNames[1]),
 			                	
 			                	
-	    if ("Sample_Plate" %in% colnames(covariates)){
+	    if ("plate" %in% colnames(covariates)){
 					choices <- colnames(covariates)
 					selectInput("phenotype", "Choose a phenotype:",
 					       choices,
 					           multiple=FALSE, 
-					               selected ="Sample_Plate")
+					               selected ="plate")
 		} else {
 				 choices <- colnames(covariates)
 					selectInput("phenotype", "Choose a phenotype:",
@@ -126,12 +99,21 @@ headerPanel(HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georg
 					           multiple=FALSE)},          	
 			                	                	
 			                	
-		selectInput("slides", "Choose slides to explore:",slides,multiple=TRUE),
+	# selectInput("slides", "Choose slides to explore:",slides,multiple=TRUE),
 			             
 	
-	checkboxInput("mean","Average density by slide"),
+	checkboxInput("mean","Average density by phenotypic level"),
 
-	checkboxInput("solidLine","Solid lines", value=TRUE)
+	selectInput("lty", "Density line type (lty):",
+	       list(1,2,3,4,5,6),
+	           multiple=FALSE, 
+	               selected=1),
+	
+	
+	selectInput("lwd", "Density line width (lwd):",
+	       list(0.5,1,1.5,2,3,4,5,6,7,8,9,10),
+	           multiple=FALSE, 
+	               selected=1)	
 	),
 	
 	
@@ -179,39 +161,35 @@ headerPanel(HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georg
 
 
 	  	tabPanel("Quality control",
-
-
-				##########  --- First plots ---#######
 				
-				wellPanel(	
+				
+				
+				# Densities plot:
+				
 				HTML('<table border=0 width="100%"><tr bgcolor="#f5f5f5"><td>'),
 
   				div(style="width:100%;max-width:600px;",
-						plotOutput("internalControls", clickId = "controlsHover")
-			             ), 
+  				
+  				# Internal controls:
+				plotOutput("internalControls", clickId = "controlsHover")), 
 				HTML('</td><td>'),
-			    plotOutput("rawDensities"),
-			    HTML('</td></tr></table>')
-			    ),
+				
+				# Fast quality control plot:
+			  	plotOutput("medianChannels", clickId = "qualityHover"),
+			    HTML('</td></tr></table>'),
+			    
+				plotOutput("rawDensities",clickId = "densitiesHover"),
+				
+				conditionalPanel(condition= "!is.null(shinyMethylSet2)", plotOutput("normDensities",clickId = "normHover")),
+				
+				
 			    
 			    
-
-			    ##########  --- Second plots ---######
-			    wellPanel(	
-				HTML('<table border=0 width="100%"><tr bgcolor="#f5f5f5"><td>'),
-
-  				div(style="width:80%;max-width:600px;",
-						plotOutput("medianChannels")
-			             ), 
-				HTML('</td><td>'),
-
-						
-						
-						#plotOutput("normalizedDensities")
-			          #    ), 
-			
-			    HTML('</td></tr></table>')
-			    )
+			    
+			    verbatimTextOutput(outputId = "cumulativeListPrint"),
+			    downloadLink("selectedSamples","selectedSamples.csv")
+			    
+			  
   
 		),
 		
@@ -260,8 +238,22 @@ HTML("<br>
   		By comparing the median total intensity of the Y-chromosome-mapped probes to the median total intensity of the X-chromosome-mapped probes, where the total intensity is the sum of the methylated and unmethylated signals, it is possible to predict the gender of the sample by looking at the two distinct clusters of intensities. See the minfi function <span style=\"font-style:italic\">getSex()</span>.  		</span></p><br><br>") ,
 
 
-		
-		plotOutput("genderClustering", clickId = "genderCutoff"),
+	
+	HTML('<table border=0 width="100%"><tr bgcolor="#f5f5f5"><td>'),
+
+  				div(style="width:100%;max-width:600px;",
+						plotOutput("genderClustering", clickId = "genderCutoff")), 
+				HTML('</td><td>'),
+			  plotOutput("densitiesGenderX"),
+			    HTML('</td></tr></table>'),
+			    	
+			    
+	
+
+	
+
+	
+	
 		
 
   sidebarPanel(
@@ -300,13 +292,17 @@ HTML("<br>
 		),
 
 
-######################   ----   PCA plot  --------  
+######################   ----   PCA --------  
 
 
 
-		tabPanel("PC Analysis",
+
+		tabPanel("PCA",
 		
-		plotOutput("pcaPlot"),
+
+			plotOutput("pcaPlot"),
+		
+		
 		
 HTML("
 <p style=\"color:#000000;font-size:17px\">A. Choose two principal components to visualize: </span></p>
@@ -369,7 +365,53 @@ if (exists("covariates")){
 
 		),
 
+######################   ----   Type I/TypeII Bias --------  
 
+
+
+		tabPanel("Probe Type Diff",
+		
+		
+
+
+	  selectInput("selectedSampleBias", "Sample:",
+	              sampleNames,
+	               multiple= FALSE),
+
+
+	 plotOutput("probeBiasPlot"),
+
+	 conditionalPanel(condition= "!is.null(shinyMethylSet2)", plotOutput("probeBiasPlotNorm"))
+	
+  
+		
+
+		),
+
+######################   ----   Reproducible report  --------  
+
+
+
+		tabPanel("Reproducible Report",
+		
+		
+	
+     HTML("<br>
+  		<p style=\"width:500px;text-align:justify\"><span style=\"color:#000000;font-size:16px\">
+  		<span style = \"font-weight:bold\">Reproducible Report</span><br><br>
+  		<span style=\"font-style:italic\">shinyMethyl</span> visualizations are reproducible in the sense that every plot can be reproduced with R functions included in the package, with the tuning parameters specified by the user.
+  		<br><br>
+          </p>"),  
+
+numericInput("gender.cutoff.markdown", "Enter the prediction threshold used in the Gender clustering panel:", -0.3, min=-5, max=5, step=0.1),
+
+		actionButton('create.report',"Create HTML Report"),
+		
+		  verbatimTextOutput(outputId = "reportPrint")
+		
+		
+
+		),
 
 ######################   ----   About  --------  
 
@@ -387,7 +429,7 @@ if (exists("covariates")){
           <span style = \"font-weight:bold\">Acknowledgements</span><br><br>
            The <span style=\"font-style:italic\">shinyMethyl</span> application is based on the package <span style=\"font-style:italic\">minfi</span>, and a large part of the source code is inspired by the work done by the <span style=\"font-style:italic\">minfi</span>'s authors. The gender clustering panel and the lower QC plot of the quality control panel are based on algorithms available in the development version of <span style=\"font-style:italic\">minfi</span> at the Bioconductor project.
           <br><br> 
-          <span style=\"font-style:italic\">shinyMethyl</span> is currently developed at the Johns Hopkins Department of Biostatistics, under the supervision of Kasper D. Hansen. Many thanks to Elizabeth M. Sweeney and John Muschelli for their help and for providing precious feedbacks. 
+          <span style=\"font-style:italic\">shinyMethyl</span> is currently developed at the Johns Hopkins Department of Biostatistics, under the supervision of Kasper D. Hansen. Many thanks to Elizabeth M. Sweeney, John Muschelli and Leonardo Collado Torres for their help and for providing precious feedbacks. 
           </br></br>
           <span style = \"font-weight:bold\">Author:</span>  Jean-Philippe Fortin
           <span style=\"color:#FFFFFF\">aa</span>   

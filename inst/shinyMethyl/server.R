@@ -1,12 +1,14 @@
 #### Created by Jean-Philippe Fortin
-#### Aug 19  2013
-
+#### March 28, 2014
 
 
 sourceDir <- system.file("shinyMethyl",package = "shinyMethyl")
-sourceDir <- paste0(sourceDir,"/","plotFunctions.R")
-source(sourceDir)
-library(RColorBrewer)
+source(paste0(sourceDir,"/","plotControlProbes.R"))
+source(paste0(sourceDir,"/","plotDensities.R"))
+source(paste0(sourceDir,"/","plotDesign.R"))
+source(paste0(sourceDir,"/","plotPCA.R"))
+source(paste0(sourceDir,"/","plotQC.R"))
+source(paste0(sourceDir,"/","plotSex.R"))
 
 
 
@@ -14,308 +16,610 @@ library(RColorBrewer)
 ############################################################
 
 
-
-
-
-
-
-
 shinyServer(function(input, output) {
 	
+betaQuantiles   <-  getBeta(shinyMethylSet1)
+mQuantiles      <-  getM(shinyMethylSet1)
+methQuantiles   <-  getMeth(shinyMethylSet1)
+unmethQuantiles <-  getUnmeth(shinyMethylSet1)
+cnQuantiles     <-  getCN(shinyMethylSet1)
+greenControls   <-  getGreenControls(shinyMethylSet1)
+redControls     <-  getRedControls(shinyMethylSet1)
+covariates      <<- pData(shinyMethylSet1)
+pca             <-  getPCA(shinyMethylSet1)$scores
+sampleNames     <-  sampleNames(shinyMethylSet1)
+slideNames      <-  substr(sampleNames,1,10)
+arrayNames      <-  substr(sampleNames,12,17)
+plateNames      <-  substr(sampleNames,1,6)
+controlNames    <-  names(greenControls)
 
-betaQuantiles <- shinyMethylData$betaQuantiles
-mQuantiles <- shinyMethylData$mQuantiles
-methQuantiles <- shinyMethylData$methQuantiles
-unmethQuantiles <- shinyMethylData$unmethQuantiles
-greenControls <- shinyMethylData$greenControls
-redControls <- shinyMethylData$redControls
-# oobControls <- shinyMethylData$oobControls
-XYMedians <- shinyMethylData$XYMedians
-sampleDistance <- shinyMethylData$sampleDistance
-covariates <- shinyMethylData$pd
-covariates <- covariates[match(colnames(shinyMethylData$betaQuantiles$II),rownames(covariates)),]
-pca<- shinyMethylData$pcaInfo$scores
+method <- shinyMethylSet1@originObject
 
 
-	sampleNames <- colnames(betaQuantiles[[1]])
-	slideNames     <- substr(sampleNames,1,10)
-	arrayNames    <- substr(sampleNames,12,17)
-	plateNames <- substr(sampleNames,1,7)
+# In the case covariates is empty:
+if (ncol(covariates)==0){
+	covariates <- data.frame(slide = slideNames, plate = plateNames)
+	rownames(covariates) <- sampleNames
+	covariates <<- covariates
+}
+
+# Global variables:
+# that will be accessed by the knitr report
+mouse.click.indices <<- c()
+colorSet     <<- "Set1" # Default color set
+sampleColors <<- as.numeric(as.factor(plateNames)) ## Default sample colors
+genderCutoff <<- -0.4 # Default cutoff for gender prediction
+current.control.type <<- "BISULFITE CONVERSION I"
+current.probe.type   <<- "I Green"
+current.density.type <<- "M-value"
+
+
+
+#########################################################
+
+###########        Colors 
+
+#########################################################
+
+
+
+
+	# To change the global color scheme:
+	setColor <- reactive({
+		colorSet <<- input$colorChoice
+	})
+	
+	
+	set.palette <- function(n, name){
+		# The name of the colors are part of the RColorBrewer package
+		if (name != "Pault" & name != "Rainbow"){
+			palette(brewer.pal(n = n, name = name ))
+			
+		# Custom palette 	
+		} else if (name == "Pault"){
+			colors <- c("#332288","#88CCEE","#44AA99","#117733","#999933","#DDCC77","#661100","#CC6677","#882255","#AA4499")
+			colors <- c("#4477AA","#CC6677","#DDCC77","#117733","#88CCEE","#AA4499","#44AA99","#999933","#882255","#661100","#6699CC", "#AA4466")
+			palette(colors)
+		} else if (name == "Rainbow"){
+			colors <- c("#781C81", "#3F56A7","#4B91C0","#5FAA9F","#91BD61","#D8AF3D","#E77C30","#D92120")
+			palette(colors)
+		}
+	}
+	
+	
+	# To choose the colors according to the phenotype:
+	sampleColors <- reactive({
+		if (input$create.report>=0){
+		return(as.numeric(as.factor(covariates[,match(input$phenotype,colnames(covariates))])))
+		}
+	})
+	
+	
+
+
+#########################################################
+
+###########        Computation of the densities
+
+#########################################################
+
+	
+	# Return x and y matrices of the densities for raw data
+	returnDensityMatrix <- reactive({
+		
+		index <- match(input$probeType,c("I Green","I Red","II","X","Y"))
+		if (input$mOrBeta=="Beta-value"){
+			bw = input$bandwidth 
+			quantiles <- betaQuantiles[[index]]
+		} else {
+			bw = input$bandwidth2
+			quantiles <- mQuantiles[[index]]
+		}
+		
+		matrix <- apply(quantiles, 2, function(x){
+			d <- density(x, bw = bw, n =512)
+			c(d$x,d$y)
+		})
+		matrix.x <- matrix[1:512,]
+		matrix.y <- matrix[513:(2*512),]
+		return(list(matrix.x = matrix.x, matrix.y = matrix.y))
+	})
+
+
+
+	# Return x and y matrices of the densities for normalized data
+	returnDensityMatrixNorm <- reactive({
+		
+	  if (is.null(shinyMethylSet2)){
+	  	return(NULL)
+	  }	else
+	  	index <- match(input$probeType,c("I Green","I Red","II","X","Y"))
+		if (input$mOrBeta=="Beta-value"){
+			bw = input$bandwidth 
+			quantiles <- shinyMethylSet2@betaQuantiles[[index]]
+		} else {
+			bw = input$bandwidth2
+			quantiles <- shinyMethylSet2@mQuantiles[[index]]
+		}
+		
+		matrix <- apply(quantiles, 2, function(x){
+			d <- density(x, bw = bw, n =512)
+			c(d$x,d$y)
+		})
+		matrix.x <- matrix[1:512,]
+		matrix.y <- matrix[513:(2*512),]
+		return(list(matrix.x = matrix.x, matrix.y = matrix.y))	
+	})
+
+
+	
+#########################################################
+
+###########         Mouse clicks section
+
+#########################################################
+	
+	
+	
+	
+	# Check if the selected sample is already in the list or not:
+	check.mouse.clicks <- function(clickedIndex, mouse.click.indices){
+			if (length(mouse.click.indices)!=0){
+				if (clickedIndex %in% mouse.click.indices){
+					mouse.click.indices <- mouse.click.indices[mouse.click.indices!=clickedIndex]
+				} else {
+					mouse.click.indices <- c(mouse.click.indices, clickedIndex)
+				}
+			} else {
+				mouse.click.indices <- c(mouse.click.indices, clickedIndex)
+			}
+			return(mouse.click.indices)
+	}
+		
+		
+	# To update the list of mouse clicks from internal controls plot:
+	updateMouseClicks <- reactive({
+		
+		mouse.x <- input$controlsHover$x
+		mouse.y <- input$controlsHover$y
+		
+		y <- reactiveControlStat()	
+        n <- length(y)
+		xDiff <- ((1:n)-rep(mouse.x, n)) / n
+		yDiff <- (y - mouse.y)/(1.3*max(y))
+		clickedIndex <- which.min(xDiff^2 + yDiff^2)
+		names(clickedIndex) <- shinyMethylSet1@sampleNames[clickedIndex]
+		
+    if (current.control.type == as.character(input$controlType)){
+      mouse.click.indices <<- check.mouse.clicks(clickedIndex, mouse.click.indices)
+    }
+	  current.control.type <<- as.character(input$controlType)
+		mouse.click.indices
+	})
+	
+	
+	# To update the list of mouse clicks from quality control plot:
+	updateMouseClicksQC <- reactive({
+		mouse.x <- input$qualityHover$x
+		mouse.y <- input$qualityHover$y
+		
+		med <- as.integer(nrow(methQuantiles[[3]])/2)
+	    mediansU <- unlist(unmethQuantiles[[3]][med,])        
+	    mediansM <- unlist(methQuantiles[[3]][med,]) 
+		
+		x <- log2(mediansU)
+		y <- log2(mediansM)
+		n <- length(y)
+		
+		range.x <- max(x) - min(x)
+		range.y <- max(y) - min(y)
+		
+		xDiff <- (x - mouse.x) / (1.4*range.x)
+		yDiff <- (y - mouse.y)/  (1.4*range.y)
+		clickedIndex <- which.min(xDiff^2 + yDiff^2)
+		names(clickedIndex) <- shinyMethylSet1@sampleNames[clickedIndex]
+		mouse.click.indices <<- check.mouse.clicks(clickedIndex, mouse.click.indices)
+		mouse.click.indices
+	})
+	
+
+	# To update the list of mouse clicks from densities plot:
+	updateMouseClicksDensities <- reactive({
+		mouse.x <- input$densitiesHover$x
+		mouse.y <- input$densitiesHover$y
+		
+		# If Beta values are selected
+		if (input$mOrBeta=="Beta-value") {
+				if (input$probeType == "II"){
+	   				ylim <- c(0,6)
+	   			} else {
+	   				ylim <- c(0,10)
+	   			}
+			xlim  = c(-0.2,1.2)
+		} else {
+			xlim  = c(-8,8)
+			ylim = c(0,0.35)
+		}
+		
+		range.x <- xlim[2]-xlim[1]
+		range.y <- ylim[2]-ylim[1]
+		
+		if (!is.null(mouse.x)){
+			density.matrix <- returnDensityMatrix()
+			x.matrix <- density.matrix[[1]]
+			y.matrix <- density.matrix[[2]]
+			x.matrix <- ((x.matrix - mouse.x)/range.x)^2
+			y.matrix <- ((y.matrix - mouse.y)/range.y)^2
+			clickedIndex <- arrayInd(which.min(x.matrix+y.matrix), c(512,ncol(x.matrix)))[2]
+			names(clickedIndex) <- shinyMethylSet1@sampleNames[clickedIndex]
+      			
+			if (current.probe.type == as.character(input$probeType) & current.density.type == as.character(input$mOrBeta)){
+			  mouse.click.indices <<- check.mouse.clicks(clickedIndex, mouse.click.indices)
+			}
+			current.probe.type <<- as.character(input$probeType)
+			current.density.type <<- as.character(input$mOrBeta)
+		}
+		mouse.click.indices
+	})
+	
+	
+
+
+	# To update the list of mouse clicks from normalized densities plot:
+	updateMouseClicksDensitiesNorm <- reactive({
+		mouse.x <- input$normHover$x
+		mouse.y <- input$normHover$y
+		
+		# If Beta values are selected
+		if (input$mOrBeta=="Beta-value") {
+				if (input$probeType == "II"){
+	   				ylim <- c(0,6)
+	   			} else {
+	   				ylim <- c(0,10)
+	   			}
+			xlim  = c(-0.2,1.2)
+		} else {
+			xlim  = c(-8,8)
+			ylim = c(0,0.35)
+		}
+		
+		range.x <- xlim[2]-xlim[1]
+		range.y <- ylim[2]-ylim[1]
+		
+		if (!is.null(mouse.x)){
+			density.matrix <- returnDensityMatrixNorm()
+			x.matrix <- density.matrix[[1]]
+			y.matrix <- density.matrix[[2]]
+			x.matrix <- ((x.matrix - mouse.x)/range.x)^2
+			y.matrix <- ((y.matrix - mouse.y)/range.y)^2
+			clickedIndex <- arrayInd(which.min(x.matrix+y.matrix), c(512,ncol(x.matrix)))[2]
+			names(clickedIndex) <- shinyMethylSet2@sampleNames[clickedIndex]
+			mouse.click.indices <<- check.mouse.clicks(clickedIndex, mouse.click.indices)
+		}
+		mouse.click.indices
+	})
+
+	
+	
+
+	# To update the list from all plots:
+	reactive.mouse.click.indices <- reactive({
+		updateMouseClicks()
+		updateMouseClicksQC()
+		updateMouseClicksDensities()
+		updateMouseClicksDensitiesNorm()
+		return(mouse.click.indices)
+	})
+
+
+
+	# Print the list of selected samples:
+	output$cumulativeListPrint <- renderPrint({
+		names <- names(reactive.mouse.click.indices())
+		n <- length(names)
+		if (n >=1){
+			cat("Selected samples: \n \n")
+			for (ii in 1:n){
+			    cat(paste0(names[ii], "\n"))
+			}
+		}
+	})
+	
+	
+	cumulativeList <- reactive({
+		names <- names(reactive.mouse.click.indices())
+		return(names)
+	})
+	
+	# To write the selected samples into a csv file:
+	output$selectedSamples <- downloadHandler(
+			
+			 filename <- "selectedSamples.csv",
+			 content <- function(con){
+			 	write.csv(cumulativeList(),con)
+			}
+	)
+			 
+
+
+
+#########################################################
+
+###########         Densities plots
+
+#########################################################
+
+
+
+# Densities plot for raw data  
+output$rawDensities <- renderPlot({
+
+	  set.palette(n=8, name=setColor())
+      colors <- sampleColors()
+      lwd <- as.numeric(input$lwd)
+      lty <- as.numeric(input$lty)
+	  index = match(input$probeType,c("I Green","I Red","II","X","Y"))
+	  
 	 
-	
-	designInfo <- data.frame(sampleNames = sampleNames,
-												slideNames  = slideNames,
-												arrayNames = arrayNames,
-												plateNames = plateNames)
-	
-	#### Ordering:
-	designInfo <- designInfo[order(plateNames,slideNames,arrayNames), ]
-	order <- match(designInfo$sampleNames, 
-				                colnames(betaQuantiles[[1]]))
-
-
-    sampleNames <- designInfo$sampleNames
-	slideNames     <- designInfo$slideNames
-	arrayNames    <- designInfo$arrayNames
-    plateNames    <- designInfo$plateNames
-	
-	plate <- as.numeric(as.factor(plateNames))
-	slides <- unique(slideNames)
-	names(slideNames) <- slideNames
-	names(slides) <- slides
-
-	for (i in 1:3){
-		betaQuantiles[[i]]         <- betaQuantiles[[i]][,order]
-		mQuantiles[[i]]             <- mQuantiles[[i]][,order]
-		methQuantiles[[i]]        <- methQuantiles[[i]][,order]
-		unmethQuantiles[[i]]    <- unmethQuantiles[[i]][,order]
-	}
-	
-	for (i in 1:12){
-		greenControls[[i]]    <- greenControls[[i]][,order]
-		redControls[[i]]        <- redControls[[i]][,order]
-	}
-	
-	XYMedians$medianXU = XYMedians$medianXU[order]
-	XYMedians$medianXM = XYMedians$medianXM[order]
-	XYMedians$medianYU = XYMedians$medianYU[order]
-	XYMedians$medianYM = XYMedians$medianYM[order]
-
-	covariates <- covariates[order,]
-	pca <- pca[order,]
-   
-    controlNames <- names(greenControls)
-
-
-    sampleColors <<- as.numeric(as.factor(plate))
-
-sampleColors <- reactive(
- color <- as.numeric(as.factor(covariates[,match(input$phenotype,colnames(covariates))]))
-)
-
-
-	   	
-
-
- #####---- Plot of the quality control using internal controls
- output$internalControls <- renderPlot({
-   
-   palette(brewer.pal(8,"Set1"))
-
-   controlStat <- returnControlStat(input$controlType, 
-                                      greenControls = greenControls,
-                                          redControls = redControls, 
-                                              controlNames = controlNames ) 	
-                                              
-    plotInternalControls(y = controlStat,
-                                             col = sampleColors(),
-                                                 main = input$controlType,
-                                                     sampleNames = sampleNames,
-                                                         selectedSlides = input$slides,
-                                                             slideNames = slideNames)
-                                                             
-    addHoverPoints(y = controlStat, 
-                                      xSelected = input$controlsHover$x, 
-                                          ySelected = input$controlsHover$y, 
-                                              sampleNames = sampleNames)
-
-  })
-
-
-
-
-
-
-
-
-
-
-
-
-
-  #####---- Plot of the densities
- output$rawDensities <- renderPlot({
-      palette(brewer.pal(8,"Set1"))
-
-	  index = match(input$probeType,c("I Green","I Red","II"))
 	  
-	  controlStat <- returnControlStat(input$controlType, 
-                                      greenControls = greenControls,
-                                          redControls = redControls, 
-                                              controlNames = controlNames ) 		
-                          
+       # Plot specifications                  
 	   if (input$mOrBeta=="Beta-value"){
-	   	from = 0
-	   	to = 1
-	   	densitiesPlot( quantiles = betaQuantiles[[index]],
-	   	                              main = "BETA-VALUE DENSITIES", 
-	   	                              xlab = "Beta-values",
-	   	                              xlim  = c(-0.2,1.2),
-	   	                              ylim = c(0,7),
-	   	                              bw    <- input$bandwidth,
-	   	                              slideNames = slideNames,
-	   	                              solidLine = input$solidLine,
-	   	                              mean = input$mean,
-	   	                              slides = input$slides,
-	   	                              col = sampleColors(), from=-4, to =4)
-	   	
-        abline(v=0,lty=3,lwd=3)
-	    abline(v=1,lty=3,lwd=3)
-	  
-	    addHoverDensity(y = controlStat, 
-                                xSelected = input$controlsHover$x, 
-                                ySelected = input$controlsHover$y, 
-                                sampleNames = sampleNames,
-                                slides = input$slides, 
-                                quantiles = betaQuantiles[[index]],
-                                bw = input$bandwidth,
-                                col = sampleColors()
-      )    
-      
-	  } else {
-	  	
-	  from = -10
-	  to = 10
-	  	
-	  densitiesPlot( quantiles = mQuantiles[[index]],
-	   	                              main = "M-VALUE DENSITIES", 
-	   	                              xlab = "M-values",
-	   	                              xlim  = c(-8,8),
-	   	                              ylim = c(0,0.5),
-	   	                              bw    <- input$bandwidth2,
-	   	                              slideNames = slideNames,
-	   	                              solidLine = input$solidLine,
-	   	                              mean = input$mean,
-	   	                              slides = input$slides,
-	   	                              col = sampleColors(), from=from, to=to)
-
-	  abline(v=0,lty=3,lwd=3)
-	  	
-	  addHoverDensity(y = controlStat, 
-                                      xSelected = input$controlsHover$x, 
-                                      ySelected = input$controlsHover$y, 
-                                      sampleNames = sampleNames,
-                                      slides = input$slides, 
-                                      quantiles = mQuantiles[[index]],
-                                      bw  = input$bandwidth2,
-                                      col = sampleColors()
-      ) 
-         
-	 }
-
+	   		xlim <- c(-0.2,1.2)
+		   	if (input$probeType == "II"){
+		   		ylim <- c(0,6)
+		   	} else {
+		   		ylim <- c(0,10)
+		   	}
+		   	from = -4; to = 4;
+		   	main = "BETA-VALUE DENSITIES"
+		   	xlab = "Beta-values"
+		   	bw <- input$bandwidth
+        quantiles <- betaQuantiles[[index]]
+		} else {
+		  	xlim <- c(-8,8)
+	  		ylim <- c(0, 0.35)
+		   	from = -10; to = 10;
+		  	main = "M-VALUE DENSITIES" 
+	   	    xlab = "M-values"
+		  	quantiles <- mQuantiles[[index]]
+		  	bw <- input$bandwidth2
+		}
+	   
+	   	              
+	    densitiesPlot(matrix.x = returnDensityMatrix()[[1]],
+	    			   matrix.y = returnDensityMatrix()[[2]],
+               quantiles = quantiles,
+	   				   sampleNames = sampleNames,
+	   	               main = main, xlab = xlab,
+	   	               xlim = xlim, ylim = ylim, col = colors,
+	   	               mean = input$mean, 
+	   	               lwd = lwd, lty = lty,
+	   	               from = from, to = to, bw = bw)
+	
+       if (!input$mean){
+         addHoverDensity(selectedSamples = reactive.mouse.click.indices(), 
+                          sampleNames = sampleNames,
+                          matrix.x = returnDensityMatrix()[[1]],
+                          matrix.y = returnDensityMatrix()[[2]],
+                          col = colors)   
+       }
+       
+          
+          
+          
+        # To draw the lines:              
+        if (input$mOrBeta=="Beta-value"){
+        	abline(v=0,lty=3,lwd=3)
+	    	abline(v=1,lty=3,lwd=3)
+        } else {
+        	abline(v=0,lty=3,lwd=3)
+        }         
  })
 
 
 
 
-      
+
+
+# Density plot for normalized data:
+output$normDensities <- renderPlot({
+     if (is.null(shinyMethylSet2)){
+	  	return(NULL)
+	 }	else {
+	  
+	  set.palette(n=8, name=setColor())
+      colors <- sampleColors()
+      lwd <- as.numeric(input$lwd)
+      lty <- as.numeric(input$lty)
+	  index = match(input$probeType,c("I Green","I Red","II","X","Y"))
+	  
+       
+       # Plot specifications                  
+	   if (input$mOrBeta=="Beta-value"){
+	   		xlim <- c(-0.2,1.2)
+		   	if (input$probeType == "II"){
+		   		ylim <- c(0,6)
+		   	} else {
+		   		ylim <- c(0,10)
+		   	}
+		   	from = -4; to = 4;
+		   	main = "Normalized data (Beta values)"
+		   	xlab = "Beta-values"
+		   	bw <- input$bandwidth
+        quantiles =  shinyMethylSet2@betaQuantiles[[index]]
+		} else {
+		  	xlim <- c(-8,8)
+	  		ylim <- c(0, 0.35)
+		   	from = -10; to = 10;
+		  	main = "Normalized data (M values)" 
+	   	    xlab = "M-values"
+		  	quantiles =  shinyMethylSet2@mQuantiles[[index]]
+		  	bw <- input$bandwidth2
+		}
+	   
+		densitiesPlot(matrix.x = returnDensityMatrixNorm()[[1]],
+	    			   matrix.y = returnDensityMatrixNorm()[[2]],
+               quantiles = quantiles,
+	   				   sampleNames = sampleNames,
+	   	               main = main, xlab = xlab,
+	   	               xlim = xlim, ylim = ylim, col = colors,
+	   	               mean = input$mean, 
+	   	               lwd = lwd, lty = lty,
+	   	               from = from, to = to, bw=bw)
+         
+    if (!input$mean){
+      addHoverDensity(selectedSamples = reactive.mouse.click.indices(), 
+                       sampleNames = sampleNames,
+                       matrix.x = returnDensityMatrixNorm()[[1]],
+                       matrix.y = returnDensityMatrixNorm()[[2]],
+                       col = colors)  
+    }
+       
+                        
+                         
+        # To draw the lines:              
+        if (input$mOrBeta=="Beta-value"){
+        	abline(v=0,lty=3,lwd=3)
+	    	abline(v=1,lty=3,lwd=3)
+        } else {
+        	abline(v=0,lty=3,lwd=3)
+        }  
+                           	 
+     }
+ })
 
 
 
+#########################################################
+
+###########         Control probes and QC plot
+
+#########################################################
 
 
-
-#####---- Plot Quality control 
-output$medianChannels <- renderPlot({
 	
-	plotQC(unmethQuantiles = unmethQuantiles, methQuantiles = methQuantiles,
-	               slides = input$slides, 
-	                    slideNames = slideNames, 
-	                        col = sampleColors())
-	 
-   controlStat <- returnControlStat(input$controlType, 
-                                      greenControls = greenControls,
-                                          redControls = redControls, 
-                                              controlNames = controlNames ) 	
-    	
-   addHoverQC(y = controlStat, 
-                                      xSelected = input$controlsHover$x, 
-                                          ySelected = input$controlsHover$y, 
-                                              sampleNames = sampleNames,
-                                                 unmethQuantiles = unmethQuantiles,
-                                                     methQuantiles = methQuantiles,
-                                                     slides = input$slides
-     )
+	
+# Return a summary measure of the selected control probes:
+reactiveControlStat <- reactive({
+		controlStat <- returnControlStat(input$controlType, 
+	                                       greenControls = greenControls,
+	                                       redControls = redControls, 
+	                                       controlNames = controlNames
+	                                       ) 	
+	    return(controlStat)
+})
+	
+	
+
+
+# Internal controls plots
+output$internalControls <- renderPlot({
+   colors <- sampleColors()
+   set.palette(n=8, name=setColor())
+
+   controlStat <- reactiveControlStat()
+                                                  
+   plotInternalControls(y = controlStat,
+                        col = colors,
+                        main = input$controlType,
+                        sampleNames = sampleNames)
+                                                             
+   addHoverPoints(y = controlStat, 
+                  selectedSamples = reactive.mouse.click.indices(), 
+                  sampleNames = sampleNames)
+
 })
 
 
 
 
+# Quality control plot
+output$medianChannels <- renderPlot({
+
+	set.palette(n=8, name=setColor())
+	colors <- sampleColors()
+	plotQC(unmethQuantiles = unmethQuantiles, 
+		   methQuantiles = methQuantiles,
+	       sampleNames = sampleNames,
+	       col = colors)
+	 
+   controlStat <- reactiveControlStat()    	
+   addHoverQC(y = controlStat, 
+              selectedSamples = reactive.mouse.click.indices(), 
+              unmethQuantiles = unmethQuantiles,
+              methQuantiles = methQuantiles)
+})
+
+
+
+#########################################################
+
+###########         Sex plot
+
+#########################################################
+
+
+	
+	# To change the gender cutoff for prediction:
+	setGenderCutoff <- reactive({
+		if (!is.null(input$genderCutoff)){
+			genderCutoff <<- input$genderCutoff$x
+		}
+	})
+	
+
+	output$diffPrint <- renderPrint({
+	
+		if (ncol(data())!=3){
+			cat("No gender was provided in the phenotype data")
+		} else {
+			diff.genders <- diffGenders()
+			diff.genders <- diff.genders[!is.na(diff.genders)]
+			if (!is.null(diffGenders())){
+				n <- length(diffGenders())
+				for (i in 1:n){
+					cat(paste0(diffGenders()[i]),"\n")
+				}
+			} else {
+				cat("The provided gender agrees with the predicted gender for all samples")
+			}
+		}
+	})
 
 
 
 
 
-
-
-### Plot gender clustering
+# Sex plot
 output$genderClustering <- renderPlot({
 
-	cutoff <- -3
-	if (!is.null(input$genderCutoff)){
-		cutoff <- input$genderCutoff$x
-	}
-	
-	plotPredictedGender(cutoff = cutoff, XYMedians = XYMedians)
-	
-	predictedGender <- returnPredictedGender(cutoff = cutoff, XYMedians = XYMedians)
-	
-	plotDiscrepancyGenders(cutoff = cutoff, 
-	     predictedGender = predictedGender,
-	          covariates = covariates, 
-	              XYMedians = XYMedians
-	  )
-	
+	setGenderCutoff()
+	plotPredictedGender(cutoff = genderCutoff, cnQuantiles = cnQuantiles)
+	plotDiscrepancyGenders(cutoff = genderCutoff, cnQuantiles = cnQuantiles, covariates = covariates)
 })
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 data <- reactive({
 	
-   cutoff <- -3
-   if (!is.null(input$genderCutoff)){
-		cutoff <- input$genderCutoff$x
-   }
+   setGenderCutoff()
+   predictedGender <- returnPredictedGender(cutoff = genderCutoff, cnQuantiles = cnQuantiles)
+   givenGender     <- returnGivenGender(covariates)
    
-   
-   predicted = returnPredictedGender(cutoff = cutoff, XYMedians)
-   possibilities <- c("gender","Gender","sex","Sex","GENDER","SEX")
-   sum <- sum(possibilities %in% colnames(covariates))
-   if (sum>0){
-		goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]
-		goodIndex <- match(goodColumn, colnames(covariates))
-		givenGender <- as.character(covariates[,goodIndex])
-		givenGender <- substr(toupper(givenGender),1,1)
-		dataToReturn <- data.frame(predicted = predicted, given = givenGender )
-		agree = rep(TRUE,nrow(dataToReturn))
-		 for (i in 1:length(agree)){
-	    	if (dataToReturn[i,1]!=dataToReturn[i,2] && !is.na(dataToReturn[i,2])){
-	    		agree[i] <- FALSE
-	    	}
-	    }
-	    dataToReturn$agree = agree	
+   dataToReturn <- data.frame(predictedGender = predictedGender)
+   if (!is.null(givenGender)){
+       non.matching.samples    <- predictedGender  != givenGender
+   	   na.samples    <- is.na(givenGender)
+       n <- length(predictedGender)
+       agree 		 <- rep("YES",n)
+       agree[non.matching.samples] <- "NO"
+       agree[na.samples] <- NA
+	   dataToReturn$givenGender <- givenGender
+	   dataToReturn$agree <- agree
    }
-   else {
-   	dataToReturn <- data.frame(predicted = predicted)
-   }
-
+   rownames(dataToReturn) <- names(predictedGender)
    return(dataToReturn)
  })
-
-
-
-
 
 
 
@@ -331,158 +635,321 @@ output$downloadClusters <- downloadHandler(
  )
 
 
-
-
-
-
-
-
-
-
- diffGenders <- reactive({
+diffGenders <- reactive({
  	
- 	predictedGender <- as.character(data()$predicted)
- 	diffs <- c()
- 	possibilities <- c("gender","Gender","sex","Sex","GENDER","SEX")
-	sum <- sum(possibilities %in% colnames(covariates))
-	 if (sum>0){
-	 	   goodColumn <- possibilities[possibilities %in% colnames(covariates)][1]
-		   goodIndex <- match(goodColumn, colnames(covariates))
-		   givenGender <- as.character(covariates[,goodIndex])
-		   givenGender <- substr(toupper(givenGender),1,1)
-		   
-		    diffGender <- rep(FALSE,length(predictedGender))
-		  for (i in 1:length(predictedGender)){
-	    	if (predictedGender[i]!=givenGender[i] && !is.na(givenGender[i])){
-	    		diffGender[i] <- TRUE
-	    	}
-	    }
-		    if (sum(diffGender)>0){
-		    diffs <- names(XYMedians$medianXU)[diffGender]
-		    }
-		    
-	}
-    return(diffs)
+ 	non.matching.samples <- c()
+ 	diffs <- data()
+ 	if (ncol(diffs)==3){
+ 		non.matching.samples <- shinyMethylSet1@sampleNames[diffs$agree=="NO"]
+ 		non.matching.samples <- non.matching.samples[complete.cases(non.matching.samples)]
+ 	}
+    return(non.matching.samples)
     
  })
 	
 	
 
-
-
-
-
-
 output$diffPrint <- renderPrint({
 
-	possibilities <- c("gender","Gender","sex","Sex","GENDER","SEX")
-	sum <- sum(possibilities %in% colnames(covariates))		
-		
-	if (length(diffGenders())!=0){
-		print(diffGenders())
-	} else if (sum>0) {
-		print("The provided gender agrees with the predicted gender for all samples")
+	if (ncol(data())!=3){
+		cat("No gender was provided in the phenotype data")
 	} else {
-		print("No gender was provided in the phenotype data")
+		diff.genders <- diffGenders()
+		diff.genders <- diff.genders[!is.na(diff.genders)]
+		if (!is.null(diffGenders())){
+			n <- length(diffGenders())
+			for (i in 1:n){
+				cat(paste0(diffGenders()[i]),"\n")
+			}
+		} else {
+			cat("The provided gender agrees with the predicted gender for all samples")
+		}
 	}
 })
 	 
 
-	 
 
 
 
 
+# Densities plot for gender X
+output$densitiesGenderX <- renderPlot({
+      setGenderCutoff()
+      lwd <- as.numeric(input$lwd)
+      lty <- as.numeric(input$lty)
+      bw <- input$bandwidth
+      
+      index = match("X",c("I Green","I Red","II","X","Y"))
+      matrix <- apply(betaQuantiles[[index]], 2, function(x){
+			d <- density(x, bw = bw, n =512)
+			c(d$x,d$y)
+	  })
+      matrix.x <- matrix[1:512,]
+	  matrix.y <- matrix[513:(2*512),]
 
 
+      predictedGender <- returnPredictedGender(cutoff = genderCutoff, cnQuantiles = cnQuantiles)
+      colors <- rep("lightskyblue", length(predictedGender))
+      colors[predictedGender=="F"] <- "orange"
 
+               
+	  densitiesPlot(matrix.x = matrix.x,
+	  			    matrix.y = matrix.y,
+	                quantiles = betaQuantiles[[index]],
+	   				sampleNames = sampleNames,
+	   	            main = "X Chromosome", 
+	   	            xlab = "Beta-values",
+	   	            xlim  = c(-0.2,1.2),
+	   	            ylim = c(0,7),
+	   	            bw  = input$bandwidth,
+	   	            lwd = lwd,
+	   	            lty = lty, 
+	   	            mean = FALSE,
+	   	            col = colors, 
+	   	            from=-4, 
+	   	            to =4)
 	   	
-	   	
-	   	
+        abline(v=0,lty=3,lwd=3)
+	    abline(v=1,lty=3,lwd=3)
 
+ })
+
+   
+
+
+
+#########################################################
+
+###########        PCA plot
+
+#########################################################
+
+
+
+
+
+
+# PCA plot
 output$pcaPlot <- renderPlot({
-	    palette(brewer.pal(8,"Set1"))
-
-	    xMin <- min(pca[,as.numeric(input$pc1)])
-	    xMax <- max(pca[,as.numeric(input$pc1)])
-	    xRange <- xMax - xMin
-	    xlim <- c(xMin-0.05*xRange, xMax+0.20*xRange)
-	    
-	    xlab <- paste("PC",as.numeric(input$pc1), " scores", sep="");
-		ylab <- paste("PC",as.numeric(input$pc2), " scores", sep="");
-	    plot(pca[,as.numeric(input$pc1)],
-	         pca[,as.numeric(input$pc2)],
-	             col = sampleColors(),   pch = 18,  cex = 2,
-	                 xlab=  xlab, ylab = ylab, xlim = xlim,
-	                     main= "Principal component analysis (PCA)",
-	                         cex.main = 1.5, cex.lab = 1.5
-	     )
-	     
-	     uColor  <- unique(sampleColors())
-         uCov    <- unique( covariates[,match(input$phenotype,colnames(covariates))])
-	     legend("bottomright",
-	         legend = uCov, pch= 18, col = uColor, cex = 1.5,
-		         title = input$phenotype
-		  )
-	      grid()
-
+		set.palette(n=8, name=setColor())
+		#palette(brewer.pal(8,setColor()))
+		
+		if (method!="Merging"){
+			plotPCA(pca = pca, 
+		        pc1 = input$pc1,
+		        pc2 = input$pc2,
+		        col = sampleColors(),
+		        covariates = covariates,
+		        selectedCov = input$phenotype
+		)
+		} 	
 })
 
 
 
 
 
-
-
- 
- 
- 
- 
-### For the moment assuming that covariates are factors...
+# Print the summary of the PCA regression: 
 output$modelPrint <- renderPrint({
-	x <- factor(plate)
-    y <- shinyMethylData$pcaInfo$scores[,as.numeric(input$pcToExplore)]
-    
-     if (exists("covariates")){
-	   	cov <- covariates[match(rownames(shinyMethylData$pcaInfo$scores),rownames(covariates)),]
-	   	x <- (as.factor(cov[,match(input$covToRegress,colnames(cov))]))
+	if (method!="Merging"){
+		y <- shinyMethylSet1@pca$scores[,as.numeric(input$pcToExplore)]
+    	cov <- covariates[match(rownames(shinyMethylSet1@pca$scores),rownames(covariates)),]
+		x <- (as.factor(cov[,match(input$covToRegress,colnames(cov))]))
+    	model <- lm(y~ x)
+    	return(summary(model))
 	}
-    
-    
-   model <- lm(y~ x)
-    summary(model)
-	 })
+    else {
+    	return("Merging was used to create the shinyMethylSet1; no PCA was performed. ")
+    }
+})
 
 
 
 
+#########################################################
 
+###########        Design plot
+
+#########################################################
 
 
 
 output$arrayDesign <- renderPlot({
-	
-
+	set.palette(n=8, name=setColor())
 	color <- covariates[,match(input$phenotype,colnames(covariates))]
     plotDesign450k(as.character(sampleNames), covariates = color , legendTitle = input$phenotype)
- 
-
 })
-
-
-
 
 
 output$arrayDesignLegend <- renderPlot({
-	
+	set.palette(n=8, name=setColor())
 	color <- covariates[,match(input$phenotype,colnames(covariates))]
-
     plotLegendDesign450k(as.character(sampleNames), covariates =color , legendTitle = input$phenotype)
  })
 
-})
 
 
 
 
+
+#########################################################
+
+###########       KnitR Report
+
+#########################################################
+
+	# To create the knitr bootstrap report:
+	createReport <- reactive({
+		
+		if (input$create.report!=0){
+			opts_chunk$set(fig.width = 7, fig.height = 5)
+			knit_bootstrap("makereport.Rmd", quiet=TRUE, chooser=c('boot', 'code'),  boot_style = "United", thumbsize=9,  show_code=FALSE)
+			system('open makereport.html')
+		}	
+	})
 	
+	# Message when the html report is created:
+	output$reportPrint <- renderPrint({
+	    createReport()
+	    if (input$create.report!=0){
+	    	cat("A html report has been saved") 
+	    }
+	})
+
+
+
+
+
+
+#########################################################
+
+###########       Probe Bias Plot
+
+#########################################################
+
+
+
+# Densities plot for raw data  
+output$probeBiasPlot <- renderPlot({
+
+	set.palette(n=8, name=setColor())
+    colors <- sampleColors()
+    lwd <- as.numeric(input$lwd)
+    lty <- as.numeric(input$lty)
+	index = match(input$probeType,c("I Green","I Red","II","X","Y"))
+	  
+	selectedSample <- as.character(input$selectedSampleBias)
+    sampleIndex <- match(selectedSample, sampleNames)
+
+    indexIGreen <- 1
+    indexIRed   <- 2 
+    indexII     <- 3
+
+	bw = input$bandwidth 
+	quantilesIGreen <- betaQuantiles[[indexIGreen]][,sampleIndex]
+	quantilesIRed <- betaQuantiles[[indexIRed]][,sampleIndex]
+	quantilesII <- betaQuantiles[[indexII]][,sampleIndex]
+	quantilesIRed <- as.vector(quantilesIRed)
+	quantilesIGreen <- as.vector(quantilesIGreen)
+	quantilesII <- as.vector(quantilesII)
+
+
+    # Plot specifications                  
+	xlim <- c(-0.2,1.2)
+   	if (input$probeType == "II"){
+   		ylim <- c(0,6)
+   	} else {
+   		ylim <- c(0,10)
+   	}
+   	from = -4; to = 4;
+   	main = "Probe Type Differences - Raw Data"
+   	xlab = "Beta-values"
+   	bw <- input$bandwidth
+	
+	plot(density(quantilesIGreen, bw=bw), 
+                   main = main, 
+                   ylab = "Density", 
+                   xlab = xlab,
+                   col = "olivedrab",
+                   xlim = xlim, 
+                   ylim = ylim, lty=lty, lwd=6)   
+	lines(density(quantilesII, bw=bw), col="black", lty=lty, lwd=6)
+	lines(density(quantilesIRed, bw=bw), col="brown2", lty=lty, lwd=6)
+
+
+    # To draw the lines:              
+    abline(v=0,lty=3,lwd=3)
+    abline(v=1,lty=3,lwd=3)
+     
+    legend(x=0.4, y=8, 
+		c("Type I Red","Type I Green","Type II"), 
+		col=c("brown2","olivedrab","black"), lwd=6, lty=1, bty="n")
+
+ })
+
+# Densities plot for raw data  
+output$probeBiasPlotNorm <- renderPlot({
+
+	if (is.null(shinyMethylSet2)){
+	  	return(NULL)
+	}	else {
+
+	set.palette(n=8, name=setColor())
+    colors <- sampleColors()
+    lwd <- as.numeric(input$lwd)
+    lty <- as.numeric(input$lty)
+	index = match(input$probeType,c("I Green","I Red","II","X","Y"))
+	  
+	selectedSample <- as.character(input$selectedSampleBias)
+    sampleIndex <- match(selectedSample, sampleNames)
+
+    indexIGreen <- 1
+    indexIRed   <- 2 
+    indexII     <- 3
+
+	bw = input$bandwidth 
+	quantilesIGreen <- shinyMethylSet2@betaQuantiles[[indexIGreen]][,sampleIndex]
+	quantilesIRed <- shinyMethylSet2@betaQuantiles[[indexIRed]][,sampleIndex]
+	quantilesII <- shinyMethylSet2@betaQuantiles[[indexII]][,sampleIndex]
+	quantilesIRed <- as.vector(quantilesIRed)
+	quantilesIGreen <- as.vector(quantilesIGreen)
+	quantilesII <- as.vector(quantilesII)
+
+
+    # Plot specifications                  
+	xlim <- c(-0.2,1.2)
+   	if (input$probeType == "II"){
+   		ylim <- c(0,6)
+   	} else {
+   		ylim <- c(0,10)
+   	}
+   	from = -4; to = 4;
+   	main = "Probe Type Differences - Normalized Data"
+   	xlab = "Beta-values"
+   	bw <- input$bandwidth
+	
+	plot(density(quantilesIGreen, bw=bw), 
+                   main = main, 
+                   ylab = "Density", 
+                   xlab = xlab,
+                   col = "olivedrab",
+                   xlim = xlim, 
+                   ylim = ylim, lty=lty, lwd=6)   
+	lines(density(quantilesII, bw=bw), col="black", lty=lty, lwd=6)
+	lines(density(quantilesIRed, bw=bw), col="brown2", lty=lty, lwd=6)
+
+	legend(x=0.4, y=8, 
+		c("Type I Red","Type I Green","Type II"), 
+		col=c("brown2","olivedrab","black"), lwd=6, lty=1, bty="n")
+
+    # To draw the lines:              
+    abline(v=0,lty=3,lwd=3)
+    abline(v=1,lty=3,lwd=3)
+    
+    }
+
+ })
+
+
+## End 
+})	

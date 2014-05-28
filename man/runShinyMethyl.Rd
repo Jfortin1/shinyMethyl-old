@@ -4,16 +4,20 @@
 Run the interactive shinyMethyl session
 }
 \description{
-	Function to run the interactive shinyMethyl session after the necessary data has been extracted. 
+	Function to run the interactive shinyMethyl session from a shinyMethylSet. 
 }
 \usage{
-runShinyMethyl(extractedData)
+runShinyMethyl(shinyMethylSet1, shinyMethylSet2 = NULL)
 }
 \arguments{
-  \item{extractedData}{
-data extracted from an \code{RGChannelSet} or a targets \code{data.frame} using \code{extractFromRGSet450k} or \code{extractFromTargets450k} 
+  \item{shinyMethylSet1}{
+\code{shinyMethylSet} that must be extracted from an \code{RGChannelSet}
+}
+  \item{shinyMethylSet2}{
+optional \code{shinyMethylSet} that must be extracted from an \code{GenomicRatioSet}
 }
 }
+
 \value{
 No value returned. Instead the shinyMethyl interactive session is launched.
 }
@@ -21,8 +25,7 @@ No value returned. Instead the shinyMethyl interactive session is launched.
 Jean-Philippe Fortin
 }
 \seealso{
-\code{\link{extractFromTargets450k}}
-\code{\link{extractFromRGSet450k}}
+\code{\link{shinyMethylSet}}
 }
 \examples{
 \dontrun{
@@ -32,9 +35,9 @@ if (require(minfiData)){
     targets$Sample_Plate <- substr(targets$Slide,1,7)
     RGSet <- read.450k.exp(base = baseDir, targets = targets)
     
-    extractedData <- extractFromRGSet450k(RGSet)
+    summarized.data <- shinySummarize(RGSet)
     
-    runShinyMethyl(extractedData)
+    runShinyMethyl(summarized.data)
 }
 }
 
