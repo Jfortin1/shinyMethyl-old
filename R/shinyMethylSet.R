@@ -2,7 +2,7 @@
 #           function(object, ...) standardGeneric("getGreenControls"))
 #setGeneric("getRedControls",
 #           function(object, ...) standardGeneric("getRedControls"))
-setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
+#setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
 setGeneric("orderByName", function(object, ...) standardGeneric("orderByName"))
 
 setClass("shinyMethylSet", 
