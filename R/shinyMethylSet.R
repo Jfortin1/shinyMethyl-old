@@ -33,10 +33,11 @@ setValidity("shinyMethylSet", function(object) {
     greenControls <- object@greenControls
     redControls   <- object@redControls
     pca <- object@pca
+    n <- length(sampleNames)
 
     # Validity for phenotype
     if (!is.null(phenotype)){
-      if (length(sampleNames) != nrow(phenotype)){
+      if (n != nrow(phenotype)){
         msg <- "Phenotype data.frame must have the same length as the sampleNames"
       }
 
