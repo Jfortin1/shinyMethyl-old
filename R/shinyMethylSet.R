@@ -84,7 +84,7 @@ setValidity("shinyMethylSet", function(object) {
     msg <- dim.quantile.validity(cnQuantiles, n.col = n,  "cnQuantiles")
 
 
-    if (object$originObject != "GenomicRatioSet"){
+    if (object@originObject != "GenomicRatioSet"){
       msg <- dim.quantile.validity(methQuantiles, n.col=n, "methQuantiles")
       msg <- dim.quantile.validity(unmethQuantiles, n.col=n, "unmethQuantiles")
     }
@@ -97,7 +97,7 @@ setValidity("shinyMethylSet", function(object) {
     row.n <- c(12, 4, 4, 3, 613, 4, 32, 61, 32, 61, 12, 3, 2, 4)
 
 
-    if (object$originObject != "GenomicRatioSet"){
+    if (object@originObject != "GenomicRatioSet"){
       if (length(greenControls) != 14 | length(redControls) != 14){
         msg <- "The greenControls and redControls lists must be of length 14"
       }
