@@ -41,9 +41,12 @@ BiocStyle::latex()
 % Introduction
 \section{Introduction}
 
-Up to now, more than 10,000 methylation samples from the state-of-the-art 450K microarray are already available through The Cancer Genome Atlas portal \citep{tcga} and the Gene Expression Omnibus (GEO) \citep{Geo}. Large-scale comparison studies, for instance between cancers or tissues, become possible epigenome-widely. These large studies often require a substantial amount of time spent on data preprocessing, quality control and other exploratory analysis. Moreover, for such studies, it is not rare to encounter significant batch effects, and those can have a dramatic impact on the validity of the biological results \citep{batchreview,Harper:2013}. With that in mind, we have developed \Biocpkg{shinyMethyl} to make the preprocessing of large 450K datasets intuitive, enjoyable and reproducible.  \Biocpkg{shinyMethyl} is an interactive visualization tool for Illumina 450K methylation array data based on the packages \Biocpkg{minfi}, \CRANpkg{shiny} and \CRANpkg{knitr} \citep{minfi,shiny,knitr}. 
+Up to now, more than 10,000 methylation samples from the state-of-the-art 450K microarray are already available through The Cancer Genome Atlas portal \citep{tcga} and the Gene Expression Omnibus (GEO) \citep{Geo}. Large-scale comparison studies, for instance between cancers or tissues, become possible epigenome-widely. These large studies often require a substantial amount of time spent on data preprocessing, quality control and other exploratory analysis. Moreover, for such studies, it is not rare to encounter significant batch effects, and those can have a dramatic impact on the validity of the biological results \citep{batchreview,Harper:2013}. With that in mind, we have developed \Biocpkg{shinyMethyl} to make the preprocessing of large 450K datasets intuitive, enjoyable and reproducible.  \Biocpkg{shinyMethyl} is an interactive visualization tool for Illumina 450K methylation array data based on the packages 
+%\Biocpkg{minfi}, \CRANpkg{shiny} and \CRANpkg{knitr} \citep{minfi,shiny,knitr}.
+\Biocpkg{minfi} and \CRANpkg{shiny} \citep{minfi,shiny}.  
 
-A few mouse clicks allow the user to appreciate insightful biological inter-array differences on a large scale. The goal of \Biocpkg{shinyMethyl} can be divided into three parts: (1) summarize a high-dimensional 450K array experiment into an exportable small-sized R object (2) launch an interactive visualization tool for quality control assessment as well as exploration of global methylation patterns associated with different phenotypes and (3) generate a comprehensive and reproducible HTML report with \CRANpkg{knitr} \citep{knitr}. 
+A few mouse clicks allow the user to appreciate insightful biological inter-array differences on a large scale. The goal of \Biocpkg{shinyMethyl} is two-fold: (1) summarize a high-dimensional 450K array experiment into an exportable small-sized R object and (2) launch an interactive visualization tool for quality control assessment as well as exploration of global methylation patterns associated with different phenotypes.
+%(3) generate a comprehensive and reproducible HTML report with \CRANpkg{knitr} \citep{knitr}. 
 \\
 \\
 Because a picture is worth a thousand words, we have implemented an online example of \Biocpkg{shinyMethyl} ready to use at
@@ -115,8 +118,10 @@ To launch a \Biocpkg{shinyMethyl} session, simply pass your \Rcode{shinyMethylSe
 <<sessionLaunching, eval=FALSE>>=
 runShinyMethyl(myShinyMethylSet)
 @
+% how to use the different panels
+\section{How to use the different \Biocpkg{shinyMethyl} panels}
 % Advanced option
-\section{Advanced option}
+\section{Advanced option: visualization of normalized data}
 
 \Biocpkg{shinyMethyl} also offers the possibility to visualize normalized data that are stored in a \Rcode{GenomicRatioSet} object. For instance, suppose we normalize the data by using the quantile normalization algorithm implemented in \Biocpkg{minfi}:
 <<normalize, eval=FALSE>>=
@@ -133,7 +138,7 @@ runShinyMethyl(summary, summary.norm)
 @
 % What does a shinyMethylSet contain?
 \section{What does a shinyMethylSet contain?}
-A \Rcode{shinyMethylSet} object is a
+A \Rcode{shinyMethylSet} object contains the following summary data from a 450K experiment: the names of the samples, a data frame for the phenotype, a list of quantiles for the M and Beta values, a list of quantiles for the methylated and unmethylated channels intensities and a list of quantiles for the copy numbers, the green and red intensities of different control probes, and the principal component analysis (PCA) results performed on the Beta values. One can access the different summaries by using the slot operator \Rcode{@}. The slot names can be obtained with the function \Rfunction{slotNames} as follows: 
 <<eval=FALSE>>=
 library(shinyMethyl)
 library(shinyMethylData)

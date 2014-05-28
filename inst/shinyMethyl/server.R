@@ -69,7 +69,7 @@ current.density.type <<- "M-value"
 		colorSet <<- input$colorChoice
 	})
 	
-	
+
 	set.palette <- function(n, name){
 		# The name of the colors are part of the RColorBrewer package
 		if (name != "Pault" & name != "Rainbow"){
@@ -89,9 +89,7 @@ current.density.type <<- "M-value"
 	
 	# To choose the colors according to the phenotype:
 	sampleColors <- reactive({
-		if (input$create.report>=0){
 		return(as.numeric(as.factor(covariates[,match(input$phenotype,colnames(covariates))])))
-		}
 	})
 	
 	
