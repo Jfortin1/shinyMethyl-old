@@ -231,6 +231,14 @@ slotNames(summary.tcga.raw)
 \end{center}
 \end{figure}
 
+\section*{Session info}
+
+Here is the output of \Rfunction{sessionInfo} on the system on which
+this document was compiled:
+<<sessionInfo, results="asis", echo=FALSE, eval=TRUE>>=
+toLatex(sessionInfo())
+@
+
 %\bibliographystyle{unsrtnat}
 \bibliography{shinyMethyl}
 \end{document}
