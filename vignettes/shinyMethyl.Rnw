@@ -196,7 +196,7 @@ this document was compiled:
 toLatex(sessionInfo())
 @
 
-%\bibliographystyle{unsrtnat}
+
 \bibliography{shinyMethyl}
 
 \newpage
@@ -247,34 +247,27 @@ toLatex(sessionInfo())
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{screenshot_designbias.png}
-\caption{\textbf{Type I/II probe bias}  }
+\caption{\textbf{Type I/II probe bias} The distributional differences between the Type I and Type II probes can be observed for each sample selected by the user.}
 \label{panel1}
 \end{center}
 \end{figure}
 
 
 
-% FIGURE 1
+% Advanced normalization
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{figures/All.png}
-\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
-  react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
-  for Infinium I probes before and after functional normalization. The dashed and solid lines in
-  black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots.}
+\caption{\textbf{Comparison of raw and normalized data} As discussed in the Advanced option, normalized data can be added as well to the visualization interface. In the present plot, the above densities represent the M-value densities after functional normalization as described in \citep{funnorm}.}
 \label{panel1}
 \end{center}
 \end{figure}
 
-% FIGURE 1
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figures/BothPlate.pdf}
 \caption{\textbf{Visualization of batch effects in the TCGA HNSCC dataset} Densities of the M-values
-  for Type I green probes before (a) and after (b) functional normalization as presented in the
+  for Type I green probes before (a) and after (b) functional normalization \citep{funnorm} as presented in the
   \Biocpkg{shinyMethyl} interactive interface. Each curve represents one sample and different colors
   represent different batches. Plots (c-d) show the average density for each plate before and after
   normalization. One can observe that functional normalization removed significantly global batch
@@ -287,8 +280,7 @@ toLatex(sessionInfo())
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figures/BothStatus.pdf}
 \caption{\textbf{Visualization of cancer/normal differences in the TCGA HNSCC dataset} Densities of
-  the M-values for Type I green probes before (a) and after (b) functional normalization as
-  presented in the \Biocpkg{shinyMethyl} interactive interface. Green and blue densities represent
+  the M-values for Type I green probes before (a) and after (b) functional normalization \citep{funnorm} as presented in the \Biocpkg{shinyMethyl} interactive interface. Green and blue densities represent
   tumor and normal samples respectively, and red densities represent 9 technical replicates of a
   control cell line. Plots (c-d) show the average density for each sample group before and after
   normalization. Functional normalization preserves the expected marginal differences between normal

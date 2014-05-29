@@ -2,7 +2,7 @@
 #### March 28, 2014
 
 server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
-    shinyServer(function(input, output) {
+    shinyServer(function(input, output) { 
         betaQuantiles   <-  getBeta(shinyMethylSet1)
         mQuantiles      <-  getM(shinyMethylSet1)
         methQuantiles   <-  getMeth(shinyMethylSet1)
@@ -300,7 +300,7 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
             content <- function(con){
                 write.csv(cumulativeList(),con)
             }
-            )
+    )
         
         
         
@@ -558,8 +558,7 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
             filename <- "predictedGender.csv",
             content <- function(con){
                 write.csv(data(),con)
-            }
-            )
+        })
         
         
         diffGenders <- reactive({
@@ -689,7 +688,7 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
             color <- covariates[,match(input$phenotype,colnames(covariates))]
             plotLegendDesign450k(as.character(sampleNames), covariates =color ,
                                  legendTitle = input$phenotype)
- })
+        })
 
 #########################################################
 ###########       KnitR Report
@@ -845,7 +844,9 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
         
         
         ## End 
-    })	
+    }
+
+)	
     
     
 }
