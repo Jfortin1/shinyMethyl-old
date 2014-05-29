@@ -6,6 +6,11 @@
 ############################################################
 
 
+
+
+ui.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
+
+
 betaQuantiles   <- getBeta(shinyMethylSet1)
 mQuantiles      <- getM(shinyMethylSet1)
 methQuantiles   <- getMeth(shinyMethylSet1)
@@ -35,8 +40,9 @@ if (ncol(covariates)==0){
 }
 
 
-shinyUI(pageWithSidebar(
-	
+#shinyUI(pageWithSidebar(
+
+pageWithSidebar(	
 	
 
   	
@@ -449,4 +455,7 @@ if (exists("covariates")){
   )
   
   
-))
+#))
+)
+
+}

@@ -2,6 +2,12 @@
 #### March 28, 2014
 
 
+
+
+
+
+server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
+
 sourceDir <- system.file("shinyMethyl",package = "shinyMethyl")
 source(paste0(sourceDir,"/","plotControlProbes.R"))
 source(paste0(sourceDir,"/","plotDensities.R"))
@@ -9,9 +15,6 @@ source(paste0(sourceDir,"/","plotDesign.R"))
 source(paste0(sourceDir,"/","plotPCA.R"))
 source(paste0(sourceDir,"/","plotQC.R"))
 source(paste0(sourceDir,"/","plotSex.R"))
-
-
-
 
 ############################################################
 
@@ -951,3 +954,6 @@ output$probeBiasPlotNorm <- renderPlot({
 
 ## End 
 })	
+
+
+}
