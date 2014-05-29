@@ -4,7 +4,7 @@ Version: 0.99.0
 Authors@R: c(person("Jean-Phillipe", "Fortin", role = c("cre", "aut"),
                     email = "jfortin@jhsph.edu"),
              person(c("Kasper", "Daniel"), "Hansen", role = "aut"))
-Depends: methods, shiny, minfi (>= 1.6.0),
+Depends: methods, shiny (>= 0.9.1), minfi (>= 1.6.0),
         IlluminaHumanMethylation450kmanifest, matrixStats,
         RColorBrewer, R (>= 3.0.0)
 Suggests: shinyMethylData, minfiData, BiocStyle
