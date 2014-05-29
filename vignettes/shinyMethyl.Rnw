@@ -94,24 +94,24 @@ how to construct an \Rcode{RGChannelSet}. Here, we show a quick way to create an
 \Rcode{RGChannelSet} from the .IDAT files contained in the package \Biocexptpkg{minfiData}.
 
 First, let's load the packages:
-<<loadlibraries, eval=FALSE>>=
+<<loadlibraries, eval=TRUE, results="hide",warning=FALSE,message=FALSE>>=
 library(minfiData)
 library(minfi)
 @ 
 
 Second, we need to tell \R{} which directory contains the .IDAT files and the experiment sheet: 
-<<eval=FALSE>>=
+<<basedir,eval=FALSE>>=
 baseDir <- system.file("extdata", package = "minfiData")
 # baseDir <- "/home/yourDirectoryPath" 
 @
 
 Third, we need to read in the experiment sheet:
-<<eval=FALSE>>=
+<<experimentsheet,eval=FALSE>>=
 targets <- read.450k.sheet(baseDir)
 head(targets)
 @
 Finally, we construct the \Rcode{RGChannelSet}:
-<<eval=FALSE>>= 
+<<rgsetconstruction,eval=FALSE>>= 
 RGSet <- read.450k.exp(base = baseDir, targets = targets)
 @
 The function \Rcode{pData()} in \Biocpkg{minfi} allows to see the phenotype data of the samples:
@@ -127,7 +127,7 @@ Please see \textbf{c} to create a \Rcode{shinyMethylSet} necessary to launch \Bi
 \Rcode{RGChannelSet} created in the previous section, we create a \Rcode{shinyMethylSet} by using
 the command \Rcode{shinySummarize()}
 
-<<Create, eval=FALSE>>=
+<<summarize, eval=FALSE>>=
 myShinyMethylSet <- shinySummarize(RGSet)
 @
 Please see \textbf{d} to  launch \Rcode{shinyMethyl} 
@@ -144,6 +144,77 @@ runShinyMethyl(myShinyMethylSet)
 
 \section{How to use the different \Biocpkg{shinyMethyl} panels}
 
+% FIGURE 1
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_qc.png}
+\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
+  react simultaneously to the user mouse clicks and selected samples are represented in
+  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
+  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
+  for Infinium I probes before and after functional normalization. The dashed and solid lines in
+  black correspond to the two samples selected by the user and match to the dots circled in black in
+  the left-hand plots.}
+\label{panel1}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_design.png}
+\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
+  react simultaneously to the user mouse clicks and selected samples are represented in
+  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
+  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
+  for Infinium I probes before and after functional normalization. The dashed and solid lines in
+  black correspond to the two samples selected by the user and match to the dots circled in black in
+  the left-hand plots.}
+\label{panel1}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_sexprediction.png}
+\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
+  react simultaneously to the user mouse clicks and selected samples are represented in
+  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
+  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
+  for Infinium I probes before and after functional normalization. The dashed and solid lines in
+  black correspond to the two samples selected by the user and match to the dots circled in black in
+  the left-hand plots.}
+\label{panel1}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_pca.png}
+\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
+  react simultaneously to the user mouse clicks and selected samples are represented in
+  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
+  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
+  for Infinium I probes before and after functional normalization. The dashed and solid lines in
+  black correspond to the two samples selected by the user and match to the dots circled in black in
+  the left-hand plots.}
+\label{panel1}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_designbias.png}
+\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
+  react simultaneously to the user mouse clicks and selected samples are represented in
+  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
+  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
+  for Infinium I probes before and after functional normalization. The dashed and solid lines in
+  black correspond to the two samples selected by the user and match to the dots circled in black in
+  the left-hand plots.}
+\label{panel1}
+\end{center}
+\end{figure}
+
 \section{Advanced option: visualization of normalized data}
 
 \Biocpkg{shinyMethyl} also offers the possibility to visualize normalized data that are stored in a
@@ -157,7 +228,7 @@ GRSet.norm <- preprocessQuantile(RGSet)
 We can then create two separate \Rcode{shinyMethylSet} objects corresponding to the raw and
 normalized data respectively:
 
-<<eval=FALSE>>=
+<<summarizeNorm,eval=FALSE>>=
 summary   <- shinySummarize(RGSset)
 summary.norm <- shinySummarize(GRSet.norm)
 @
@@ -166,7 +237,7 @@ To launch the \Biocpkg{shinyMethyl} interface, use \Rcode{runShinyMethyl()} with
 being the \Rcode{shinyMethylSet} extracted from the raw data and the second argument being the
 \Rcode{shinyMethylSet} extracted from the normalized data as follows:
 
-<<eval=FALSE>>=
+<<runshiny,eval=FALSE>>=
 runShinyMethyl(summary, summary.norm)
 @
 
