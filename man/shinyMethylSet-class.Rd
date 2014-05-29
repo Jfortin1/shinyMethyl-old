@@ -23,13 +23,9 @@
 \alias{getBeta,shinyMethylSet-method}
 \alias{getM,shinyMethylSet-method}
 \alias{getCN,shinyMethylSet-method}
-\alias{getGreenControls,shinyMethylSet-method}
-\alias{getRedControls,shinyMethylSet-method}
-\alias{getPCA,shinyMethylSet-method}
 \alias{show,shinyMethylSet-method}
 \alias{pData,shinyMethylSet-method}
 \alias{sampleNames,shinyMethylSet-method}
-\alias{orderByName,shinyMethylSet-method}
 
 \title{shinyMethylSet instances}
 

@@ -1,8 +1,7 @@
 bibentry("article",
          title = "{shinyMethyl: interactive visualization of Illumina 450K methylation arrays}",
-         author = c(
-         person(c("Jean-Philippe"), "Fortin"),
-         person(c("Kasper", "D."), "Hansen"),
+         author = c(person(c("Jean-Philippe"), "Fortin"),
+                    person(c("Kasper", "D."), "Hansen")
          ),
          year = 2014,
          textVersion = 

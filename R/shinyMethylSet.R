@@ -1,10 +1,3 @@
-#setGeneric("getGreenControls",
-#           function(object, ...) standardGeneric("getGreenControls"))
-#setGeneric("getRedControls",
-#           function(object, ...) standardGeneric("getRedControls"))
-#setGeneric("getPCA", function(object, ...) standardGeneric("getPCA"))
-setGeneric("orderByName", function(object, ...) standardGeneric("orderByName"))
-
 setClass("shinyMethylSet", 
          representation(sampleNames = "character",
                         phenotype = "data.frame",
@@ -168,49 +161,49 @@ shinyMethylSet <- function(sampleNames = new("character"),
     set
 }
 
-setMethod("orderByName", signature(object = "shinyMethylSet"), 
-          function(object){
-              sampleNames    <- object@sampleNames
-              slideNames     <- substr(sampleNames,1,10)
-              arrayNames     <- substr(sampleNames,12,17)
-              plateNames     <- substr(sampleNames,1,6)
-              
-              designInfo <- data.frame(sampleNames = sampleNames,
-                                       slideNames  = slideNames,
-                                       arrayNames  = arrayNames,
-                                       plateNames  = plateNames
-                                       )
-              designInfo <- designInfo[order(plateNames,slideNames,arrayNames), ]
-              o <- match(designInfo$sampleNames, sampleNames)
-              for (i in 1:length(object@betaQuantiles)){
-                  object@betaQuantiles[[i]] <- object@betaQuantiles[[i]][,o]
-              }
-              for (i in 1:length(object@mQuantiles)){
-                  object@mQuantiles[[i]] <- object@mQuantiles[[i]][,o]
-              }
-              for (i in 1:length(object@methQuantiles)){
-                  object@methQuantiles[[i]] <- object@methQuantiles[[i]][,o]
-              }
-              for (i in 1:length(object@unmethQuantiles)){
-                  object@unmethQuantiles[[i]] <- object@unmethQuantiles[[i]][,o]
-              }
-              for (i in 1:length(object@cnQuantiles)){
-                  object@cnQuantiles[[i]] <- object@cnQuantiles[[i]][,o]
-              }
-
-              object@sampleNames <- object@sampleNames[o]
-              object@pca$scores  <- object@pca$scores[o,]
-              object@pca$percs  <- object@pca$percs[o]
-              
-              object@phenotype <- object@phenotype[o,]
-              
-              for (i in 1:length(object@greenControls)){
-                  object@greenControls[[i]] <- object@greenControls[[i]][,o]
-                  object@redControls[[i]]   <- object@redControls[[i]][,o]
-              }
-              
-              object
-          })
+orderByName <- function(object){
+    stopifnot(is(object, "shinyMethylSet"))
+    sampleNames    <- object@sampleNames
+    slideNames     <- substr(sampleNames,1,10)
+    arrayNames     <- substr(sampleNames,12,17)
+    plateNames     <- substr(sampleNames,1,6)
+    
+    designInfo <- data.frame(sampleNames = sampleNames,
+                             slideNames  = slideNames,
+                             arrayNames  = arrayNames,
+                             plateNames  = plateNames
+                             )
+    designInfo <- designInfo[order(plateNames,slideNames,arrayNames), ]
+    o <- match(designInfo$sampleNames, sampleNames)
+    for (i in 1:length(object@betaQuantiles)){
+        object@betaQuantiles[[i]] <- object@betaQuantiles[[i]][,o]
+    }
+    for (i in 1:length(object@mQuantiles)){
+        object@mQuantiles[[i]] <- object@mQuantiles[[i]][,o]
+    }
+    for (i in 1:length(object@methQuantiles)){
+        object@methQuantiles[[i]] <- object@methQuantiles[[i]][,o]
+    }
+    for (i in 1:length(object@unmethQuantiles)){
+        object@unmethQuantiles[[i]] <- object@unmethQuantiles[[i]][,o]
+    }
+    for (i in 1:length(object@cnQuantiles)){
+        object@cnQuantiles[[i]] <- object@cnQuantiles[[i]][,o]
+    }
+    
+    object@sampleNames <- object@sampleNames[o]
+    object@pca$scores  <- object@pca$scores[o,]
+    object@pca$percs  <- object@pca$percs[o]
+    
+    object@phenotype <- object@phenotype[o,]
+    
+    for (i in 1:length(object@greenControls)){
+        object@greenControls[[i]] <- object@greenControls[[i]][,o]
+        object@redControls[[i]]   <- object@redControls[[i]][,o]
+    }
+    
+    object
+})
 
 setMethod("show",signature(object="shinyMethylSet"),
           function(object){
