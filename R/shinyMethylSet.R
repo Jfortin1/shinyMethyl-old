@@ -203,7 +203,7 @@ orderByName <- function(object){
     }
     
     object
-})
+}
 
 setMethod("show",signature(object="shinyMethylSet"),
           function(object){
