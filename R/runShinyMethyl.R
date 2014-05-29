@@ -27,8 +27,8 @@ runShinyMethyl <- function(shinyMethylSet1, shinyMethylSet2 = NULL) {
 		shinyMethylSet2 <- NULL
 	}
 
-	source(paste0(directory, "/", "ui.R"))
-	source(paste0(directory, "/", "server.R"))
+	#source(paste0(directory, "/", "ui.R"))
+	#source(paste0(directory, "/", "server.R"))
 
 	shinyMethyl.app <- list(ui = ui.shinyMethyl(shinyMethylSet1, shinyMethylSet2), server = server.shinyMethyl(shinyMethylSet1, 
 		shinyMethylSet2))
