@@ -144,6 +144,7 @@ runShinyMethyl(myShinyMethylSet)
 
 \section{How to use the different \Biocpkg{shinyMethyl} panels}
 
+Please see the different figures at the end of the vignette that explain each of the panels.
 
 \section{Advanced option: visualization of normalized data}
 
@@ -181,14 +182,24 @@ component analysis (PCA) results performed on the Beta values. One can access th
 summaries by using the slot operator \Rcode{@}. The slot names can be obtained with the function
 \Rfunction{slotNames} as follows:
 
-<<eval=FALSE>>=
+<<eval=TRUE,warning=FALSE,message=FALSE>>=
 library(shinyMethyl)
 library(shinyMethylData)
-data(summary.tcga.raw)
-summary.tcga.raw
 slotNames(summary.tcga.raw)
 @
 
+\section*{Session info}
+
+Here is the output of \Rfunction{sessionInfo} on the system on which
+this document was compiled:
+<<sessionInfo, results="asis", echo=FALSE, eval=TRUE>>=
+toLatex(sessionInfo())
+@
+
+%\bibliographystyle{unsrtnat}
+\bibliography{shinyMethyl}
+
+\newpage
 
 % Quality control figure
 \begin{figure}[htbp]
@@ -236,7 +247,7 @@ slotNames(summary.tcga.raw)
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{screenshot_designbias.png}
-\caption{\textbf{} }
+\caption{\textbf{Type I/II probe bias}  }
 \label{panel1}
 \end{center}
 \end{figure}
@@ -286,14 +297,5 @@ slotNames(summary.tcga.raw)
 \end{center}
 \end{figure}
 
-\section*{Session info}
-
-Here is the output of \Rfunction{sessionInfo} on the system on which
-this document was compiled:
-<<sessionInfo, results="asis", echo=FALSE, eval=TRUE>>=
-toLatex(sessionInfo())
-@
-
-%\bibliographystyle{unsrtnat}
-\bibliography{shinyMethyl}
 \end{document}
+
