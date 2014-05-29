@@ -22,14 +22,12 @@ BiocStyle::latex()
 % Introduction
 \section{Introduction}
 
-Up to now, more than 10,000 methylation samples from the state-of-the-art 450K microarray are
-already available through The Cancer Genome Atlas portal \citep{tcga} and the Gene Expression
+Up to now, more than 10,000 methylation samples from the state-of-the-art 450K microarray have been made available through The Cancer Genome Atlas portal \citep{tcga} and the Gene Expression
 Omnibus (GEO) \citep{Geo}. Large-scale comparison studies, for instance between cancers or tissues,
 become possible epigenome-widely. These large studies often require a substantial amount of time
-spent on data preprocessing, quality control and other exploratory analysis. Moreover, for such
+spent on preprocessing the data and performing quality control. For such
 studies, it is not rare to encounter significant batch effects, and those can have a dramatic impact
-on the validity of the biological results \citep{batchreview,Harper:2013}. With that in mind, we
-have developed \Biocpkg{shinyMethyl} to make the preprocessing of large 450K datasets intuitive,
+on the validity of the biological results \citep{batchreview,Harper:2013}. With that in mind, we developed \Biocpkg{shinyMethyl} to make the preprocessing of large 450K datasets intuitive,
 enjoyable and reproducible.  \Biocpkg{shinyMethyl} is an interactive visualization tool for Illumina
 450K methylation array data based on the packages \Biocpkg{minfi} and \CRANpkg{shiny}
 \citep{minfi,shiny}.
@@ -41,8 +39,7 @@ tool for quality control assessment as well as exploration of global methylation
 with different phenotypes.
 %(3) generate a comprehensive and reproducible HTML report with \CRANpkg{knitr} \citep{knitr}. 
 
-Because a picture is worth a thousand words, we have implemented an online example of
-\Biocpkg{shinyMethyl} ready to use at \url{http://spark.rstudio.com/jfortin/shinyMethyl/}
+Because a picture is worth a thousand words, we have implemented an example online of the interactive interface: \url{http://spark.rstudio.com/jfortin/shinyMethyl/}
 
 % shinyMethyl at a glance
 \section{Example dataset}
@@ -51,66 +48,70 @@ To take a quick look at how the interactive interface of \Biocpkg{shinyMethyl} w
 included an example dataset in the companion package \Biocexptpkg{shinyMethylData}. The dataset
 contains the extracted data of 369 Head and Neck cancer samples downloaded from The Cancer Genome
 Atlas (TCGA) data portal \citep{tcga}: 310 tumor samples, 50 matched normals and 9 replicates of a
-control cell lines. The first \Rcode{shinyMethylSet} was created from the raw data (no
+control cell line. The first \Rcode{shinyMethylSet} object (see Section 3 for the definition of a \Rcode{shinyMethylSet} object) was created from the raw data (no
 normalization) and is stored under the name \Rcode{summary.tcga.raw.rda}; the second
-\Rcode{shinyMethylSet} was created from a \Rcode{GenomicRatioSet} containing the normalized data and
+\Rcode{shinyMethylSet} object was created from a \Rcode{GenomicRatioSet} containing the normalized data and
 the file is stored under the name \Rcode{summary.tcga.norm.rda}. The samples were normalized using
 functional normalization, a preprocessing procedure that we recently developed for heterogeneous
 methylation data \citep{funnorm}.
 
-To launch \Biocpkg{shinyMethyl} with this TCGA dataset, enter the following commands in an \R{} session:
+To launch \Biocpkg{shinyMethyl} with this TCGA dataset, simply type the following commands in a fresh \R{} session:
 <<shinyMethylData, eval=FALSE>>=
 library(shinyMethyl)
 library(shinyMethylData)
 runShinyMethyl(summary.tcga.raw, summary.tcga.norm)
 @
-The interactive interface will take a few seconds to be launched in your default HTML browser. 
+\bioccomment{The interactive interface will take a few seconds to be launched in your default HTML browser.} 
 
 \section{Creating your own dataset visualization}
+In this section we describe how to launch an interactive visualization for your dataset. If you know and already have an \Rcode{RGChannelSet} for your data, go to section a). If not, go to section b).
 
 \subsection*{a) For users familiar with RGChannelSet objects}
 
 If you are familiar with \Rcode{RGChannelSet} objects from the \Biocpkg{minfi} package, and if you
-already have an \Rcode{RGChannelSet} for your experiment, you can launch \Biocpkg{shinyMethyl} in
-two steps:
-
-<<2stepapproach,eval=FALSE>>=
+already have an \Rcode{RGChannelSet} for your experiment, you can launch \Biocpkg{shinyMethyl} in two steps. For this tutorial purpose we will use the \Rcode{RGChannelSet} stored in the package \Biocpkg{minfiData} under the name \Rcode{RGsetEx}:
+<<minfidata,eval=TRUE,warning=FALSE,message=FALSE>>=
+library(minfiData)
+@
+We first summarize the 450K experiment with \Rcode{shinySummarize}
+<<2stepapproach,eval=TRUE,message=FALSE,warning=FALSE>>=
 library(shinyMethyl)
-summary <- shinySummarize(yourRGSet)
+summary <- shinySummarize(RGsetEx) 
+@
+and then launch the interface with \Rcode{runShinyMethyl}:
+<<launching,eval=FALSE>>=
 runShinyMethyl(summary)
 @
-Otherwise go to section \textbf{b} to learn how to create an \Rcode{RGChannelSet} object.
+To learn how to create an \Rcode{RGChannelSet} object, go to section \textbf{b}.
 
 %To create an RGChannelSet object
 \subsection*{b) To create an RGChannelSet object}
 
-An \Rcode{RGChannelSet} is a \Biocpkg{minfi} object containing the raw intensities in the green and
-red channels of your experiment samples. To create an \Rcode{RGChannelSet}, you will need to have
-the raw files of the experiment with extension .IDAT (we refer to those as .IDAT files) If you do
-not have these files, you might want to ask your collaborators or the processing core of your lab if
-they have them. You absolutely need them to use both \Biocpkg{minfi} and \Biocpkg{shinyMethyl}. The
+An \Rcode{RGChannelSet} is an object defined in \Biocpkg{minfi} containing the raw intensities of the green and red channels of your 450K experiment. To create an \Rcode{RGChannelSet}, you will need to have
+the raw files of the experiment with extension .IDAT (we refer to those as .IDAT files). In case you do
+not have these files, you might want to ask your collaborators or your processing core if
+they have those. You absolutely need them to both use the packages \Biocpkg{minfi} and \Biocpkg{shinyMethyl}. The
 vignette in \Biocpkg{minfi} describes carefully how to read the data in for different scenarios and
 how to construct an \Rcode{RGChannelSet}. Here, we show a quick way to create an
 \Rcode{RGChannelSet} from the .IDAT files contained in the package \Biocexptpkg{minfiData}.
 
-First, let's load the packages:
 <<loadlibraries, eval=TRUE, results="hide",warning=FALSE,message=FALSE>>=
 library(minfiData)
 library(minfi)
 @ 
 
-Second, we need to tell \R{} which directory contains the .IDAT files and the experiment sheet: 
+We need to tell \R{} which directory contains the .IDAT files and the experiment sheet: 
 <<basedir,eval=FALSE>>=
 baseDir <- system.file("extdata", package = "minfiData")
 # baseDir <- "/home/yourDirectoryPath" 
 @
 
-Third, we need to read in the experiment sheet:
+We also need to read in the experiment sheet:
 <<experimentsheet,eval=FALSE>>=
 targets <- read.450k.sheet(baseDir)
 head(targets)
 @
-Finally, we construct the \Rcode{RGChannelSet}:
+Finally, we construct the \Rcode{RGChannelSet} using \Rcode{read.450k.exp}:
 <<rgsetconstruction,eval=FALSE>>= 
 RGSet <- read.450k.exp(base = baseDir, targets = targets)
 @
@@ -125,7 +126,7 @@ Please see \textbf{c} to create a \Rcode{shinyMethylSet} necessary to launch \Bi
 
 \Biocpkg{shinyMethyl} requires that you have already created an \Rcode{RGChannelSet}. From the
 \Rcode{RGChannelSet} created in the previous section, we create a \Rcode{shinyMethylSet} by using
-the command \Rcode{shinySummarize()}
+the command \Rcode{shinySummarize}
 
 <<summarize, eval=FALSE>>=
 myShinyMethylSet <- shinySummarize(RGSet)
@@ -136,7 +137,7 @@ Please see \textbf{d} to  launch \Rcode{shinyMethyl}
 \subsection*{d) To launch the interactive interface}
 
 To launch a \Biocpkg{shinyMethyl} session, simply pass your \Rcode{shinyMethylSet} object to the
-\textit{runShinyMethyl()} function as follows:
+\Rcode{runShinyMethyl} function as follows:
 
 <<sessionLaunching, eval=FALSE>>=
 runShinyMethyl(myShinyMethylSet)
@@ -144,13 +145,13 @@ runShinyMethyl(myShinyMethylSet)
 
 \section{How to use the different \Biocpkg{shinyMethyl} panels}
 
-Please see the different figures at the end of the vignette that explain each of the panels.
+The different figures at the end of the vignette explain how to use each of the \Biocpkg{shinyMethyl}panels.
 
 \section{Advanced option: visualization of normalized data}
 
 \Biocpkg{shinyMethyl} also offers the possibility to visualize normalized data that are stored in a
 \Rcode{GenomicRatioSet} object. For instance, suppose we normalize the data by using the quantile
-normalization algorithm implemented in \Biocpkg{minfi}:
+normalization algorithm implemented in \Biocpkg{minfi} (this function returns a \Rcode{GenomicRatioSet} object by default):
 
 <<normalize, eval=FALSE>>=
 GRSet.norm <- preprocessQuantile(RGSet)
@@ -164,7 +165,7 @@ summary   <- shinySummarize(RGSset)
 summary.norm <- shinySummarize(GRSet.norm)
 @
 
-To launch the \Biocpkg{shinyMethyl} interface, use \Rcode{runShinyMethyl()} with the first argument
+To launch the \Biocpkg{shinyMethyl} interface, use \Rcode{runShinyMethyl} with the first argument
 being the \Rcode{shinyMethylSet} extracted from the raw data and the second argument being the
 \Rcode{shinyMethylSet} extracted from the normalized data as follows:
 
@@ -174,7 +175,7 @@ runShinyMethyl(summary, summary.norm)
 
 \section{What does a shinyMethylSet contain?}
 
-A \Rcode{shinyMethylSet} object contains the following summary data from a 450K experiment: the
+A \Rcode{shinyMethylSet} object contains several summary data from a 450K experiment: the
 names of the samples, a data frame for the phenotype, a list of quantiles for the M and Beta values,
 a list of quantiles for the methylated and unmethylated channels intensities and a list of quantiles
 for the copy numbers, the green and red intensities of different control probes, and the principal
@@ -187,6 +188,13 @@ library(shinyMethyl)
 library(shinyMethylData)
 slotNames(summary.tcga.raw)
 @
+
+For instance, one can retrieve the phenotype by
+<<pheno,eval=TRUE>>=
+head(summary.tcga.raw@phenotype)
+@
+
+\bioccomment{shinyMethyl also contain different accessor functions to access the slots. Please see the manual for more information.}
 
 \section*{Session info}
 
@@ -207,11 +215,11 @@ toLatex(sessionInfo())
 \includegraphics[width=1\textwidth]{screenshot_qc.png}
 \caption{\textbf{Example of interactive visualization and quality control assessment} The three plots
   react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Bisulfite conversion probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c) M-value densities
-  for Infinium I probes for the raw data. The dashed and solid lines in
+  black. In this scenario, colors represent batch, but colors can be chosen to reflect the phenotype of the samples as well via the left-hand-side panel. The three different plots are: A) Plot of the quality controls probes reacting to the left-hand-side panel; the current plot shows the bisulfite conversion probes intensities. B) Quality control plot as implemented in \Biocpkg{minfi}:  the median
+  intensity of the M channel against the median intensity of the U channel. Samples with bad quality would cluster away from the cloud shown in the current plot. For this dataset, all samples look good. C) Densities of the methylation intensities (can be chosen to be Beta-values or M-values, and can be chosen by probe type). The current plot shows the M-value densities
+  for Infinium I probes, for the raw data. The dashed and solid lines in
   black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots. The left-hand-side panel allows users to select different tuning parameters for the plots, as well as different phenotypes for the colors.}
+  the left-hand plots. The left-hand-side panel allows users to select different tuning parameters for the plots, as well as different phenotypes for the colors. The user can click on the samples that seem to have low quality, and can download the names of the samples in a csv file for further analysis (not shown in the screenshot).}
 \label{panel1}
 \end{center}
 \end{figure}
@@ -220,8 +228,8 @@ toLatex(sessionInfo())
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{screenshot_design.png}
-\caption{\textbf{Array design panel} The plot represents the physical slides (6 $\times$ 2 samples) on which the samples were assayed. The user can select the phenotype and colors allow to distinguish balanced designs.}
-\label{panel1}
+\caption{\textbf{Array design panel} The plot represents the physical slides (6 $\times$ 2 samples) on which the samples were assayed in the machine. The user can select the phenotype to color the samples. This plot allows to explore the quality of the randomization of the samples for a given phenotype.}
+\label{panel2}
 \end{center}
 \end{figure}
 
@@ -229,8 +237,8 @@ toLatex(sessionInfo())
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{screenshot_sexprediction.png}
-\caption{\textbf{Sex prediction algorithm panel} The difference of the median copy number intensity for the Y chromosome and the median copy number intensity for the X chromosome can be used to separate males and females. In a), the user can select the vertical cutoff (dashed line) manually with the mouse to separate the two clusters (orange for females, blue for males). Corresponding Beta-value densities appear in b). The predicted sex can be downloaded in a csv file in c), and samples for which the predicted sex differs from the sex provided in the phenotype will appear in d).}
-\label{panel1}
+\caption{\textbf{Sex prediction algorithm panel} The difference of the median copy number intensity for the Y chromosome and the median copy number intensity for the X chromosome can be used to separate males and females. In A), the user can select the vertical cutoff (dashed line) manually with the mouse to separate the two clusters (orange for females, blue for males). Corresponding Beta-value densities appear in B) for further validation. The predicted sex can be downloaded in a csv file in C), and samples for which the predicted sex differs from the sex provided in the phenotype will appear in D).}
+\label{panel3}
 \end{center}
 \end{figure}
 
@@ -239,7 +247,7 @@ toLatex(sessionInfo())
 \begin{center}
 \includegraphics[width=1\textwidth]{screenshot_pca.png}
 \caption{\textbf{Principal component analysis (PCA) panel.} The user can select the principal components to visualize (PC1 and PC2 are shown in the current plot) and can choose the phenotype for the coloring. In the present plot, one can observe that the first two principal components distinguish tumor samples from normal samples for the TCGA example dataset (see example dataset section).}
-\label{panel1}
+\label{panel4}
 \end{center}
 \end{figure}
 
@@ -247,8 +255,8 @@ toLatex(sessionInfo())
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{screenshot_designbias.png}
-\caption{\textbf{Type I/II probe bias} The distributional differences between the Type I and Type II probes can be observed for each sample selected by the user.}
-\label{panel1}
+\caption{\textbf{Type I/II probe bias} The distributional differences between the Type I and Type II probes can be observed for each sample (selected by the user).}
+\label{panel5}
 \end{center}
 \end{figure}
 
@@ -258,18 +266,18 @@ toLatex(sessionInfo())
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=1\textwidth]{figures/All.png}
-\caption{\textbf{Comparison of raw and normalized data} As discussed in the Advanced option, normalized data can be added as well to the visualization interface. In the present plot, the above densities represent the M-value densities after functional normalization as described in \citep{funnorm}.}
-\label{panel1}
+\caption{\textbf{Comparison of raw and normalized data} As discussed in the Advanced option, normalized data can be added as well to the visualization interface. In the present plot, the top plot at the right shows the raw densities while the bottom plot shows the densities after functional normalization \citep{funnorm}.}
+\label{norm}
 \end{center}
 \end{figure}
 
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figures/BothPlate.pdf}
-\caption{\textbf{Visualization of batch effects in the TCGA HNSCC dataset} Densities of the M-values
-  for Type I green probes before (a) and after (b) functional normalization \citep{funnorm} as presented in the
+\caption{\textbf{Visualization of batch effects in the TCGA HNSCC dataset} In the first two plots are shown the densities of the M-values
+  for Type I green probes before and after functional normalization \citep{funnorm} as presented in the
   \Biocpkg{shinyMethyl} interactive interface. Each curve represents one sample and different colors
-  represent different batches. Plots (c-d) show the average density for each plate before and after
+  represent different batches. The last two plots show the average density for each plate before and after
   normalization. One can observe that functional normalization removed significantly global batch
   effects.}
 \label{plate}
@@ -279,10 +287,10 @@ toLatex(sessionInfo())
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figures/BothStatus.pdf}
-\caption{\textbf{Visualization of cancer/normal differences in the TCGA HNSCC dataset} Densities of
+\caption{\textbf{Visualization of cancer/normal differences in the TCGA HNSCC dataset}In the first two plots are shown the densities of
   the M-values for Type I green probes before (a) and after (b) functional normalization \citep{funnorm} as presented in the \Biocpkg{shinyMethyl} interactive interface. Green and blue densities represent
   tumor and normal samples respectively, and red densities represent 9 technical replicates of a
-  control cell line. Plots (c-d) show the average density for each sample group before and after
+  control cell line. The last two plots show the average density for each sample group before and after
   normalization. Functional normalization preserves the expected marginal differences between normal
   and cancer, while reducing the variation between the technical controls (red lines).}
 \label{status}
