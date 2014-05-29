@@ -694,24 +694,24 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
 ###########       KnitR Report
 #########################################################
 
-	## To create the knitr bootstrap report:
-	createReport <- reactive({
-            if (input$create.report!=0){
-                opts_chunk$set(fig.width = 7, fig.height = 5)
-                knit_bootstrap("makereport.Rmd", quiet=TRUE,
-                               chooser=c('boot', 'code'),
-                               boot_style = "United",
-                               thumbsize=9,  show_code=FALSE)
-                system('open makereport.html')
-            }
-	})
-	## Message when the html report is created:
-	output$reportPrint <- renderPrint({
-            createReport()
-            if (input$create.report!=0){
-                cat("A html report has been saved") 
-            }
-	})
+	# ## To create the knitr bootstrap report:
+	# createReport <- reactive({
+ #            if (input$create.report!=0){
+ #                opts_chunk$set(fig.width = 7, fig.height = 5)
+ #                knit_bootstrap("makereport.Rmd", quiet=TRUE,
+ #                               chooser=c('boot', 'code'),
+ #                               boot_style = "United",
+ #                               thumbsize=9,  show_code=FALSE)
+ #                system('open makereport.html')
+ #            }
+	# })
+	# ## Message when the html report is created:
+	# output$reportPrint <- renderPrint({
+ #            createReport()
+ #            if (input$create.report!=0){
+ #                cat("A html report has been saved") 
+ #            }
+	# })
         
 
 
