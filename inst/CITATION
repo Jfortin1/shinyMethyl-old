@@ -1,4 +1,4 @@
-bibentry("article",
+bibentry("Manual",
          title = "{shinyMethyl: interactive visualization of Illumina 450K methylation arrays}",
          author = c(person(c("Jean-Philippe"), "Fortin"),
                     person(c("Kasper", "D."), "Hansen")
