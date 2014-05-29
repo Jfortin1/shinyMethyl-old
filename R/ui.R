@@ -154,9 +154,9 @@ headerPanel(HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georg
   		<p style=\"width:500px;text-align:justify\"><span style=\"color:#000000;font-size:16px\">
   		Welcome to
   		 <span style=\"font-weight:bold\">shiny</span><span style=\"color:#E56717;font-weight:bold\">M</span><span style=\"font-weight:bold\">ethyl</span>, 
-  		 the interactive R-package for 
-  		exploration of methylation data based on shiny. The current version
-  		is designed for the Illumina HumanMethylation 450k Array. 
+  		 an interactive visualization R package for 
+  		exploration and quality control of methylation data. The current version
+  		is designed for Illumina Human Methylation 450K arrays. 
  <br><br>For more information, please visit <span style=\"font-style:italic\">shinyMethyl.com</span><br><br><br></p>")),
   		
 
@@ -430,17 +430,16 @@ if (exists("covariates")){
 		HTML("<br>
   		<p style=\"width:500px;text-align:justify\"><span style=\"color:#000000;font-size:16px\">
   		<span style = \"font-weight:bold\">About</span><br><br>
-  		<span style=\"font-style:italic\">shinyMethyl</span> is a complementary tool to <span style=\"font-style:italic\">minfi</span> for visualizing methylation data from the Illumina 450k array. The application is still in development and will be soon be compatible with methylation data from the Illumina 27k array. 
+  		<span style=\"font-style:italic\">shinyMethyl</span> is a complementary tool to <span style=\"font-style:italic\">minfi</span> for visualizing methylation data from Illumina 450K arrays. 
   		<br><br>
           <span style = \"font-weight:bold\">Acknowledgements</span><br><br>
-           The <span style=\"font-style:italic\">shinyMethyl</span> application is based on the package <span style=\"font-style:italic\">minfi</span>, and a large part of the source code is inspired by the work done by the <span style=\"font-style:italic\">minfi</span>'s authors. The gender clustering panel and the lower QC plot of the quality control panel are based on algorithms available in the development version of <span style=\"font-style:italic\">minfi</span> at the Bioconductor project.
+           The <span style=\"font-style:italic\">shinyMethyl</span> application is based on the package <span style=\"font-style:italic\">minfi</span>, and a large part of the source code is inspired by the work done by the <span style=\"font-style:italic\">minfi</span>'s authors. The gender clustering panel and the lower QC plot of the quality control panel are based on algorithms available in <span style=\"font-style:italic\">minfi</span> at the Bioconductor project.
           <br><br> 
-          <span style=\"font-style:italic\">shinyMethyl</span> is currently developed at the Johns Hopkins Department of Biostatistics, under the supervision of Kasper D. Hansen. Many thanks to Elizabeth M. Sweeney, John Muschelli and Leonardo Collado Torres for their help and for providing precious feedbacks. 
+          <span style=\"font-style:italic\">shinyMethyl</span> is currently developed at the Johns Hopkins Department of Biostatistics. Many thanks to Elizabeth M. Sweeney, John Muschelli and Leonardo Collado Torres for their help and for providing precious feedbacks. 
           </br></br>
-          <span style = \"font-weight:bold\">Author:</span>  Jean-Philippe Fortin
-          <span style=\"color:#FFFFFF\">aa</span>   
-          <span style=\"font-style:italic\">  jfortinbiostats.com</span><br><br>
-             <span style = \"font-weight:bold\">Webpage:</span>  <span style=\"font-style:italic\">shinymethyl.com</span><br><br>
+          <span style = \"font-weight:bold\">Authors:</span>  Jean-Philippe Fortin and Kasper Daniel Hansen
+         <br><br>
+             <span style = \"font-weight:bold\">Webpage:</span>  <span style=\"font-style:italic\">github.com/jfortin1/shinyMethyl</span><br><br>
           
   		</span></p>")
   		
