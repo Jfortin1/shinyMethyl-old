@@ -144,76 +144,7 @@ runShinyMethyl(myShinyMethylSet)
 
 \section{How to use the different \Biocpkg{shinyMethyl} panels}
 
-% FIGURE 1
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=1\textwidth]{screenshot_qc.png}
-\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
-  react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
-  for Infinium I probes before and after functional normalization. The dashed and solid lines in
-  black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots.}
-\label{panel1}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=1\textwidth]{screenshot_design.png}
-\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
-  react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
-  for Infinium I probes before and after functional normalization. The dashed and solid lines in
-  black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots.}
-\label{panel1}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=1\textwidth]{screenshot_sexprediction.png}
-\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
-  react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
-  for Infinium I probes before and after functional normalization. The dashed and solid lines in
-  black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots.}
-\label{panel1}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=1\textwidth]{screenshot_pca.png}
-\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
-  react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
-  for Infinium I probes before and after functional normalization. The dashed and solid lines in
-  black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots.}
-\label{panel1}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=1\textwidth]{screenshot_designbias.png}
-\caption{\textbf{Example of interactive visualization and quality control assessment} The four plots
-  react simultaneously to the user mouse clicks and selected samples are represented in
-  black. Colors represent batch. (a) Average negative control probes intensities (b) the median
-  intensity of the M channel against the median intensity of the U channel (c-d) M-value densities
-  for Infinium I probes before and after functional normalization. The dashed and solid lines in
-  black correspond to the two samples selected by the user and match to the dots circled in black in
-  the left-hand plots.}
-\label{panel1}
-\end{center}
-\end{figure}
+Please see the different figures at the end of the vignette that explain each of the panels.
 
 \section{Advanced option: visualization of normalized data}
 
@@ -251,13 +182,77 @@ component analysis (PCA) results performed on the Beta values. One can access th
 summaries by using the slot operator \Rcode{@}. The slot names can be obtained with the function
 \Rfunction{slotNames} as follows:
 
-<<eval=FALSE>>=
+<<eval=TRUE,warning=FALSE,message=FALSE>>=
 library(shinyMethyl)
 library(shinyMethylData)
-data(summary.tcga.raw)
-summary.tcga.raw
 slotNames(summary.tcga.raw)
 @
+
+\section*{Session info}
+
+Here is the output of \Rfunction{sessionInfo} on the system on which
+this document was compiled:
+<<sessionInfo, results="asis", echo=FALSE, eval=TRUE>>=
+toLatex(sessionInfo())
+@
+
+%\bibliographystyle{unsrtnat}
+\bibliography{shinyMethyl}
+
+\newpage
+
+% Quality control figure
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_qc.png}
+\caption{\textbf{Example of interactive visualization and quality control assessment} The three plots
+  react simultaneously to the user mouse clicks and selected samples are represented in
+  black. Colors represent batch. (a) Bisulfite conversion probes intensities (b) the median
+  intensity of the M channel against the median intensity of the U channel (c) M-value densities
+  for Infinium I probes for the raw data. The dashed and solid lines in
+  black correspond to the two samples selected by the user and match to the dots circled in black in
+  the left-hand plots. The left-hand-side panel allows users to select different tuning parameters for the plots, as well as different phenotypes for the colors.}
+\label{panel1}
+\end{center}
+\end{figure}
+
+% Design figure
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_design.png}
+\caption{\textbf{Array design panel} The plot represents the physical slides (6 $\times$ 2 samples) on which the samples were assayed. The user can select the phenotype and colors allow to distinguish balanced designs.}
+\label{panel1}
+\end{center}
+\end{figure}
+
+% Sex predicition 
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_sexprediction.png}
+\caption{\textbf{Sex prediction algorithm panel} The difference of the median copy number intensity for the Y chromosome and the median copy number intensity for the X chromosome can be used to separate males and females. In a), the user can select the vertical cutoff (dashed line) manually with the mouse to separate the two clusters (orange for females, blue for males). Corresponding Beta-value densities appear in b). The predicted sex can be downloaded in a csv file in c), and samples for which the predicted sex differs from the sex provided in the phenotype will appear in d).}
+\label{panel1}
+\end{center}
+\end{figure}
+
+% Principal Component Analsyis
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_pca.png}
+\caption{\textbf{Principal component analysis (PCA) panel.} The user can select the principal components to visualize (PC1 and PC2 are shown in the current plot) and can choose the phenotype for the coloring. In the present plot, one can observe that the first two principal components distinguish tumor samples from normal samples for the TCGA example dataset (see example dataset section).}
+\label{panel1}
+\end{center}
+\end{figure}
+
+% Design Bias
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{screenshot_designbias.png}
+\caption{\textbf{Type I/II probe bias}  }
+\label{panel1}
+\end{center}
+\end{figure}
+
+
 
 % FIGURE 1
 \begin{figure}[htbp]
@@ -302,14 +297,5 @@ slotNames(summary.tcga.raw)
 \end{center}
 \end{figure}
 
-\section*{Session info}
-
-Here is the output of \Rfunction{sessionInfo} on the system on which
-this document was compiled:
-<<sessionInfo, results="asis", echo=FALSE, eval=TRUE>>=
-toLatex(sessionInfo())
-@
-
-%\bibliographystyle{unsrtnat}
-\bibliography{shinyMethyl}
 \end{document}
+
