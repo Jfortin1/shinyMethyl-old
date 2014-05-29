@@ -844,9 +844,5 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
         
         
         ## End 
-    }
-
-)	
-    
-    
+    }    
 }
