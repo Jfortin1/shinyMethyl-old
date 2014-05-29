@@ -100,9 +100,9 @@ plotPlate <- function(plateybottom, plateytop, platexleft, color){
          lwd=2, col=0)
     
     startsColumn1 <- sort(seq(plateybottom, plateytop,
-                              (plateytop-plateybottom)/6), decreasing=T)[-1]
+                              (plateytop-plateybottom)/6), decreasing=TRUE)[-1]
     endsColumn1 <-  sort(seq(plateybottom, plateytop,
-                             (plateytop-plateybottom)/6), decreasing=T)[-7]
+                             (plateytop-plateybottom)/6), decreasing=TRUE)[-7]
     
     ## For plotting the left column:
     for (k in 1:length(startsColumn1)){
