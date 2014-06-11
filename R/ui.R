@@ -30,10 +30,11 @@ ui.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
     ## shinyUI(pageWithSidebar(
     pageWithSidebar(
 ###########################  ---  Header ------------ ##############
-        headerPanel(
-            HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georgia,Serif\">
-         shiny<span style=\"color:#E56717\">M</span><span style=\"color:#000000\">ethyl</span></p>")
-            ),
+        #headerPanel(
+        #    HTML("<p style=\"color:#000000;font-family:\"Times New Roman\",Georgia,Serif\">
+        # shiny<span style=\"color:#E56717\">M</span><span style=\"color:#000000\">ethyl</span></p>")
+        #    ),
+        headerPanel("shinyMethyl"),
 ###########################  ---  Sidebar ---------- ###############
         sidebarPanel(
             wellPanel(
