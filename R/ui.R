@@ -246,8 +246,6 @@ ui.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
           </br></br>
           <span style = \"font-weight:bold\">Authors:</span>  Jean-Philippe Fortin and Kasper Daniel Hansen
          <br><br>
-             <span style = \"font-weight:bold\">Webpage:</span>  <span style=\"font-style:italic\">github.com/jfortin1/shinyMethyl</span><br><br>
-          
   		</span></p>")
                          )
                 )
