@@ -1,11 +1,12 @@
 import(methods)
+import(BiocGenerics)
 import(matrixStats)
 importMethodsFrom(minfi)
 import(IlluminaHumanMethylation450kmanifest)
-import(RColorBrewer)
 import(shiny)
 import(minfi)
 
+importFrom(RColorBrewer, brewer.pal)
 
 export(runShinyMethyl, getGreenControls, getRedControls,
        orderByName, shinySummarize, getPCA, shinyMethylSet)

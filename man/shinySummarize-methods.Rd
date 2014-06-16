@@ -32,12 +32,8 @@
 }
 \examples{
 if (require(minfiData)){
-  baseDir <- system.file("extdata", package = "minfiData")
-  targets <- read.450k.sheet(baseDir)
-  targets$Sample_Plate <- substr(targets$Slide,1,7)
-  RGSet <- read.450k.exp(base = baseDir, targets = targets)
-
-  summarized.data <- shinySummarize(RGSet)
+  library(minfiData)
+  summarized.data <- shinySummarize(RGsetEx)
 }
 }
 

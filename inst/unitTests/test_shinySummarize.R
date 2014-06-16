@@ -1,5 +1,6 @@
 test_shinySummarize <- function(){
 	stopifnot(require(minfiData))
+	stopifnot(require(minfi))
     stopifnot(require(digest))
     stopifnot(require(shinyMethyl))
     load(file.path(path.package("shinyMethyl"), "unitTests", "testDigests.rda"))

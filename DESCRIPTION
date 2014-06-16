@@ -4,9 +4,10 @@ Version: 0.99.1
 Authors@R: c(person("Jean-Philippe", "Fortin", role = c("cre", "aut"),
                     email = "jfortin@jhsph.edu"),
              person(c("Kasper", "Daniel"), "Hansen", role = "aut"))
-Depends: methods, shiny (>= 0.9.1), minfi (>= 1.6.0),
+Depends: methods, BiocGenerics (>= 0.3.2), shiny (>= 0.9.1), minfi (>= 1.6.0),
         IlluminaHumanMethylation450kmanifest, matrixStats,
-        RColorBrewer, R (>= 3.0.0)
+        R (>= 3.0.0)
+Imports: RColorBrewer
 Suggests: shinyMethylData, minfiData, BiocStyle, RUnit, digest
 Description: Interactive tool for visualizing Illumina's 450k array data
 Url: https://github.com/Jfortin1/shinyMethyl
