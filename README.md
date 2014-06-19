@@ -41,6 +41,26 @@ library(shinyMethylData)
 runShinyMethyl(tcga.summary.raw, tcga.summary.norm)
 ```
 
+# Citation
+
+
+To cite package __shinyMethyl__ in publications use:
+
+Jean-Philippe Fortin and Kasper Daniel Hansen (2014). shinyMethyl: 
+Interactive visualization of 450k methylation data. R package 
+https://github.com/Jfortin1/shinyMethyl
+
+A BibTeX entry for LaTeX users is
+
+@Manual{,
+    title = {shinyMethyl: 
+Interactive visualization of 450k methylation data},
+    author = {Jean-Philippe Fortin and Kasper Daniel Hansen},
+    year = {2014},
+    note = {R package version},
+    url = {https://github.com/Jfortin1/shinyMethyl},
+}
+
 Updates
 ------------
 
