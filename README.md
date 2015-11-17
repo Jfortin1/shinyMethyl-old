@@ -30,9 +30,9 @@ install.packages("RColorBrewer")
 To install the development version of shinyMethyl:
 ```{r}
 library(devtools)
-install_github("shiny", "rstudio")
-install_github("shinyMethyl", "jfortin1")
-install_github("shinyMethylData", "jfortin1")
+install_github("rstudio/shiny")
+install_github("jfortin1/shinyMethylData")
+install_github("jfortin1/shinyMethylData")
 ```
 
 Vignette
@@ -71,6 +71,7 @@ A BibTeX entry for LaTeX users is
 
 Updates
 ------------
+
 
 - The package is now build using S4 classes; the current functions of shinyMethyl are no longer in used. The function shinySummarize() applied to a RGChannelSet object is now used to produce a shinyMethylSet, which is passed to runShinyMethyl() to launch a shinyMethyl session. Please see the vignette.
 - Fixed returnPCScores() dependency on annotation package. Thanks to Maarten van Iterson 
