@@ -45,7 +45,7 @@ After installation, you can launch shinyMethyl with an example dataset from TCGA
 ```{r}
 library(shinyMethyl)
 library(shinyMethylData)
-runShinyMethyl(tcga.summary.raw, tcga.summary.norm)
+runShinyMethyl(summary.tcga.raw, summary.tcga.norm)
 ```
 
 # Citation
