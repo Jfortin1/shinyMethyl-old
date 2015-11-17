@@ -31,7 +31,7 @@ To install the development version of shinyMethyl:
 ```{r}
 library(devtools)
 install_github("rstudio/shiny")
-install_github("jfortin1/shinyMethylData")
+install_github("jfortin1/shinyMethyl")
 install_github("jfortin1/shinyMethylData")
 ```
 
