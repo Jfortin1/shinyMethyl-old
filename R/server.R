@@ -561,7 +561,7 @@ server.shinyMethyl <- function(shinyMethylSet1, shinyMethylSet2=NULL){
                 dataToReturn$givenGender <- givenGender
                 dataToReturn$agree <- agree
             }
-            rownames(dataToReturn) <- names(predictedGender)
+            rownames(dataToReturn) <- sampleNames
             return(dataToReturn)
         })
         
