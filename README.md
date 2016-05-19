@@ -5,7 +5,7 @@ shinyMethyl
 
 Authors: [Jean-Philippe Fortin](mailto:zerbino@ebi.ac.uk) and [Kasper Daniel Hansen](mailto:khansen@jhsph.edu)
 
-Welcome to shinyMethyl, an interactive R application based on the shiny package for exploration of DNA methylation data from Illumina 450K arrays. Please find an online demo of shinyMethyl [here](http://spark.rstudio.com/jfortin/shinyMethyl/)
+Welcome to shinyMethyl, an interactive R application based on the shiny package for exploration of DNA methylation data from Illumina arrays (450k and EPIC arrays).
 
 The shinyMethyl paper is now out [here](http://f1000research.com/articles/3-175/v1)
 
