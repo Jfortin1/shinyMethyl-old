@@ -14,3 +14,9 @@
     \item Fixed names in predicted sex csv file. 
   }
 }
+
+\section{Version 1.4}{
+  \itemize{
+    \item Now handles EPIC arrays. 
+  }
+}
