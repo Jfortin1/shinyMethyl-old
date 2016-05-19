@@ -7,3 +7,9 @@
     \item Initial submission to Bioconductor.
   }
 }
+
+\section{Version 1.3.1}{
+  \itemize{
+    \item Fixed reactivity with new shiny
+  }
+}
