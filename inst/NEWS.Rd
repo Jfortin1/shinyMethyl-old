@@ -8,8 +8,9 @@
   }
 }
 
-\section{Version 1.3.1}{
+\section{Version 1.3.2}{
   \itemize{
-    \item Fixed reactivity with new shiny
+    \item Fixed reactivity with new shiny. 
+    \item Fixed names in predicted sex csv file. 
   }
 }
