@@ -3,7 +3,7 @@ shinyMethyl
 
 [![Build Status](https://travis-ci.org/Jfortin1/shinyMethyl.svg?branch=master)](https://travis-ci.org/Jfortin1/shinyMethyl)
 
-Authors: [Jean-Philippe Fortin](mailto:zerbino@ebi.ac.uk) and [Kasper Daniel Hansen](mailto:khansen@jhsph.edu)
+Authors: [Jean-Philippe Fortin](mailto:fortin946@gmail.com) and [Kasper Daniel Hansen](mailto:khansen@jhsph.edu)
 
 Welcome to shinyMethyl, an interactive R application based on the shiny package for exploration of DNA methylation data from Illumina arrays (450k and EPIC arrays). shinyMethyl is part of the [Bioconductor project](http://www.bioconductor.org/packages/devel/bioc/html/shinyMethyl.html).
 
